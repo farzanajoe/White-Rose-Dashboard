@@ -1,0 +1,179 @@
+/* 🌍 GLOBAL */
+body {
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    background: #f4f6fb;
+    color: #333;
+}
+
+/* 🔝 TOP BAR */
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 30px;
+    background: linear-gradient(90deg, #4b0082, #6a0dad);
+    color: white;
+}
+
+.topbar h1 {
+    margin: 0;
+}
+
+.search-area input {
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+    width: 250px;
+}
+
+.search-area button {
+    margin-left: 10px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+}
+
+/* TOGGLE BUTTONS */
+.toggle {
+    background: #ddd;
+}
+
+.toggle.active {
+    background: #ffcc00;
+    color: black;
+}
+
+/* 🧭 HEADER */
+.results-header {
+    padding: 25px 30px;
+    background: white;
+    border-bottom: 1px solid #eee;
+}
+
+/* 🧱 LAYOUT */
+.container {
+    display: flex;
+}
+
+/* 🎛 SIDEBAR */
+.filters {
+    width: 260px;
+    padding: 20px;
+    background: white;
+    border-right: 1px solid #eee;
+}
+
+.filters h3 {
+    margin-top: 0;
+}
+
+.filters label {
+    font-weight: bold;
+    display: block;
+    margin-top: 15px;
+}
+
+/* 📊 RESULTS */
+.results {
+    flex: 1;
+    padding: 25px;
+}
+
+/* SORT BAR */
+.sort-bar {
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+/* 📄 CARDS GRID */
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+/* 🧾 CARD */
+.card {
+    background: white;
+    padding: 18px;
+    border-radius: 16px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+    transition: 0.25s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+/* HOVER EFFECT */
+.card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+}
+
+/* 🟣 PAPER STYLE */
+.paper {
+    border-left: 6px solid #8000ff;
+}
+
+.paper .badge {
+    color: #8000ff;
+}
+
+/* 🔵 THESIS STYLE */
+.thesis {
+    border-left: 6px solid #007bff;
+}
+
+.thesis .badge {
+    color: #007bff;
+}
+
+/* BADGE */
+.badge {
+    font-size: 13px;
+    font-weight: bold;
+}
+
+/* TITLE */
+.card h3 {
+    margin: 10px 0;
+}
+
+/* TAGS */
+.tags {
+    margin-top: 10px;
+}
+
+.tags span {
+    display: inline-block;
+    background: #eef1f7;
+    padding: 6px 10px;
+    margin-right: 5px;
+    border-radius: 20px;
+    font-size: 12px;
+}
+
+/* LINK */
+.card a {
+    display: inline-block;
+    margin-top: 10px;
+    text-decoration: none;
+    font-weight: bold;
+    color: #555;
+}
+
+.card a:hover {
+    color: black;
+}
+
+/* 🎨 EXTRA: COLOURED TAGS */
+.paper .tags span {
+    background: #f3e8ff;
+    color: #6a0dad;
+}
+
+.thesis .tags span {
+    background: #e6f0ff;
+    color: #0056b3;
+}

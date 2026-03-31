@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sheffield Research Hub</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #f5f3ef;
+      --surface:   #ffffff;
+      --border:    #e2ddd6;
+      --text:      #1a1714;
+      --muted:     #7a7268;
+      --accent:    #2a4a7f;
+      --accent-lt: #eef1f8;
+      --paper:     #2a4a7f;
+      --thesis:    #5b3a8c;
+      --tag-bg:    #ede9e3;
+      --shadow:    0 2px 12px rgba(0,0,0,.07);
+      --shadow-lg: 0 8px 32px rgba(0,0,0,.11);
+      --radius:    10px;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      font-size: 15px;
+    }
+
+    /* ── TOPBAR ── */
+    .topbar {
+      background: var(--accent);
+      color: #fff;
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      height: 64px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 16px rgba(42,74,127,.25);
+    }
+
+    .topbar h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      letter-spacing: -.01em;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .topbar h1 span { opacity: .55; font-weight: 400; }
+
+    .search-area {
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+      flex: 1;
+    }
+
+    .search-wrap {
+      flex: 1;
+      position: relative;
+      max-width: 520px;
+    }
+
+    .search-wrap svg {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      opacity: .45;
+      pointer-events: none;
+    }
+
+    .search-area input {
+      width: 100%;
+      padding: .55rem .9rem .55rem 2.4rem;
+      border: none;
+      border-radius: 6px;
+      background: rgba(255,255,255,.13);
+      color: #fff;
+      font-family: 'DM Sans', sans-serif;
+      font-size: .9rem;
+      outline: none;
+      transition: background .2s;
+    }
+
+    .search-area input::placeholder { color: rgba(255,255,255,.45); }
+    .search-area input:focus { background: rgba(255,255,255,.22); }
+
+    .btn-ghost {
+      padding: .48rem .85rem;
+      border-radius: 6px;
+      border: 1.5px solid rgba(255,255,255,.3);
+      background: transparent;
+      color: #fff;
+      font-family: 'DM Sans', sans-serif;
+      font-size: .82rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background .18s, border-color .18s;
+      white-space: nowrap;
+    }
+
+    .btn-ghost:hover { background: rgba(255,255,255,.12); }
+
+    .toggle-group { display: flex; gap: 0; border-radius: 6px; overflow: hidden; border: 1.5px solid rgba(255,255,255,.3); }
+
+    .toggle-group .toggle {
+      padding: .45rem .85rem;
+      background: transparent;
+      border: none;
+      color: rgba(255,255,255,.65);
+      font-family: 'DM Sans', sans-serif;
+      font-size: .82rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background .18s, color .18s;
+    }
+
+    .toggle-group .toggle.active {
+      background: rgba(255,255,255,.2);
+      color: #fff;
+    }
+
+    /* ── RESULTS HEADER ── */
+    .results-header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 1.2rem 2rem;
+      display: flex;
+      align-items: baseline;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .results-header h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.45rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .results-header .count {
+      font-size: .85rem;
+      color: var(--muted);
+      background: var(--tag-bg);
+      padding: .22rem .65rem;
+      border-radius: 20px;
+      font-weight: 500;
+    }
+
+    /* ── LAYOUT ── */
+    .container {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      gap: 1.5rem;
+      max-width: 1200px;
+      margin: 1.5rem auto;
+      padding: 0 1.5rem;
+    }
+
+    /* ── SIDEBAR ── */
+    .filters {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.4rem;
+      height: fit-content;
+      position: sticky;
+      top: 80px;
+      box-shadow: var(--shadow);
+    }
+
+    .filters h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 1.2rem;
+      padding-bottom: .7rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .filter-group {
+      margin-bottom: 1.3rem;
+    }
+
+    .filter-group label.group-label {
+      display: block;
+      font-size: .72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      color: var(--muted);
+      margin-bottom: .65rem;
+    }
+
+    .range-wrap { position: relative; }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 4px;
+      border-radius: 2px;
+      background: var(--border);
+      outline: none;
+      cursor: pointer;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: var(--accent);
+      border: 2px solid #fff;
+      box-shadow: 0 1px 4px rgba(0,0,0,.2);
+    }
+
+    .range-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: .72rem;
+      color: var(--muted);
+      margin-top: .35rem;
+    }
+
+    .check-item {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      padding: .35rem 0;
+      cursor: pointer;
+      font-size: .88rem;
+      color: var(--text);
+      transition: color .15s;
+    }
+
+    .check-item:hover { color: var(--accent); }
+
+    .check-item input[type="checkbox"] {
+      accent-color: var(--accent);
+      width: 15px;
+      height: 15px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .check-item .chip-count {
+      margin-left: auto;
+      font-size: .72rem;
+      color: var(--muted);
+      background: var(--tag-bg);
+      padding: .1rem .42rem;
+      border-radius: 10px;
+    }
+
+    .filter-divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: .3rem 0 1rem;
+    }
+
+    .btn-reset {
+      width: 100%;
+      padding: .48rem;
+      border-radius: 6px;
+      border: 1.5px solid var(--border);
+      background: transparent;
+      color: var(--muted);
+      font-family: 'DM Sans', sans-serif;
+      font-size: .82rem;
+      cursor: pointer;
+      transition: border-color .18s, color .18s;
+      margin-top: .5rem;
+    }
+
+    .btn-reset:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* ── MAIN RESULTS ── */
+    .results { min-width: 0; }
+
+    .sort-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+      gap: .6rem;
+    }
+
+    .sort-bar-left {
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+      font-size: .85rem;
+      color: var(--muted);
+    }
+
+    .sort-bar select {
+      padding: .38rem .7rem;
+      border-radius: 6px;
+      border: 1.5px solid var(--border);
+      background: var(--surface);
+      font-family: 'DM Sans', sans-serif;
+      font-size: .85rem;
+      color: var(--text);
+      cursor: pointer;
+      outline: none;
+    }
+
+    .export-btn {
+      padding: .4rem .85rem;
+      border-radius: 6px;
+      border: 1.5px solid var(--border);
+      background: var(--surface);
+      font-family: 'DM Sans', sans-serif;
+      font-size: .82rem;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all .18s;
+    }
+
+    .export-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-lt); }
+
+    /* ── CARDS ── */
+    .cards { display: flex; flex-direction: column; gap: 1rem; }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.4rem 1.5rem;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: .5rem 1rem;
+      box-shadow: var(--shadow);
+      transition: box-shadow .2s, transform .2s, border-color .2s;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 4px;
+      border-radius: 10px 0 0 10px;
+      background: var(--paper);
+    }
+
+    .card.thesis::before { background: var(--thesis); }
+
+    .card:hover {
+      box-shadow: var(--shadow-lg);
+      transform: translateY(-2px);
+      border-color: #ccc;
+    }
+
+    .card-main { min-width: 0; }
+
+    .card-top {
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+      margin-bottom: .55rem;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .3rem;
+      font-size: .7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      padding: .22rem .6rem;
+      border-radius: 20px;
+      background: var(--accent-lt);
+      color: var(--paper);
+      flex-shrink: 0;
+    }
+
+    .card.thesis .badge {
+      background: #f0ebf8;
+      color: var(--thesis);
+    }
+
+    .card-year {
+      font-size: .8rem;
+      color: var(--muted);
+    }
+
+    .card h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.05rem;
+      font-weight: 600;
+      line-height: 1.4;
+      margin-bottom: .45rem;
+      color: var(--text);
+    }
+
+    .card-meta {
+      font-size: .82rem;
+      color: var(--muted);
+      margin-bottom: .55rem;
+    }
+
+    .card-meta strong { color: var(--text); font-weight: 500; }
+
+    .card p.desc {
+      font-size: .88rem;
+      color: #4a4540;
+      line-height: 1.6;
+      margin-bottom: .75rem;
+    }
+
+    .tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .4rem;
+    }
+
+    .tags span {
+      font-size: .75rem;
+      font-weight: 500;
+      padding: .2rem .6rem;
+      border-radius: 20px;
+      background: var(--tag-bg);
+      color: var(--muted);
+      transition: background .15s, color .15s;
+    }
+
+    .card:hover .tags span { background: var(--accent-lt); color: var(--accent); }
+    .card.thesis:hover .tags span { background: #f0ebf8; color: var(--thesis); }
+
+    .card-actions {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: .5rem;
+      grid-row: 1 / 3;
+    }
+
+    .view-link {
+      display: inline-flex;
+      align-items: center;
+      gap: .3rem;
+      font-size: .82rem;
+      font-weight: 600;
+      color: var(--accent);
+      text-decoration: none;
+      padding: .4rem .8rem;
+      border-radius: 6px;
+      border: 1.5px solid var(--accent-lt);
+      transition: background .18s, border-color .18s;
+      white-space: nowrap;
+    }
+
+    .card.thesis .view-link { color: var(--thesis); border-color: #e8dff5; }
+
+    .view-link:hover { background: var(--accent-lt); border-color: var(--accent); }
+    .card.thesis .view-link:hover { background: #f0ebf8; border-color: var(--thesis); }
+
+    .save-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--border);
+      font-size: 1.1rem;
+      transition: color .18s;
+      padding: .2rem;
+    }
+
+    .save-btn:hover { color: #e8a020; }
+
+    /* ── PAGINATION ── */
+    .pagination {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: .4rem;
+      margin-top: 2rem;
+      padding-bottom: 2rem;
+    }
+
+    .page-btn {
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 6px;
+      border: 1.5px solid var(--border);
+      background: var(--surface);
+      font-family: 'DM Sans', sans-serif;
+      font-size: .85rem;
+      font-weight: 500;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all .18s;
+      text-decoration: none;
+    }
+
+    .page-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-lt); }
+    .page-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+    .page-btn.arrow { font-size: 1rem; }
+  </style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<header class="topbar">
+  <h1>Sheffield <span>Research Hub</span></h1>
+  <div class="search-area">
+    <div class="search-wrap">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <input type="text" placeholder="Search research..." value="Artificial Intelligence">
+    </div>
+    <button class="btn-ghost">⚙ Filters</button>
+    <div class="toggle-group">
+      <button class="toggle active">📄 Papers</button>
+      <button class="toggle">🎓 Theses</button>
+    </div>
+  </div>
+</header>
+
+<!-- RESULTS HEADER -->
+<section class="results-header">
+  <h2>Results for: "Artificial Intelligence"</h2>
+  <span class="count">2,483 results</span>
+</section>
+
+<div class="container">
+
+  <!-- SIDEBAR -->
+  <aside class="filters">
+    <h3>Refine Results</h3>
+
+    <div class="filter-group">
+      <label class="group-label">Publication Year</label>
+      <div class="range-wrap">
+        <input type="range" min="2015" max="2025" value="2020">
+        <div class="range-labels"><span>2015</span><span>2025</span></div>
+      </div>
+    </div>
+
+    <hr class="filter-divider">
+
+    <div class="filter-group">
+      <label class="group-label">Department</label>
+      <label class="check-item">
+        <input type="checkbox" checked> Computer Science <span class="chip-count">834</span>
+      </label>
+      <label class="check-item">
+        <input type="checkbox"> Engineering <span class="chip-count">412</span>
+      </label>
+      <label class="check-item">
+        <input type="checkbox"> Medicine <span class="chip-count">287</span>
+      </label>
+      <label class="check-item">
+        <input type="checkbox"> Psychology <span class="chip-count">196</span>
+      </label>
+    </div>
+
+    <hr class="filter-divider">
+
+    <div class="filter-group">
+      <label class="group-label">Document Type</label>
+      <label class="check-item">
+        <input type="checkbox" checked> Papers <span class="chip-count">1,840</span>
+      </label>
+      <label class="check-item">
+        <input type="checkbox"> Theses <span class="chip-count">643</span>
+      </label>
+    </div>
+
+    <hr class="filter-divider">
+
+    <div class="filter-group">
+      <label class="group-label">Open Access</label>
+      <label class="check-item">
+        <input type="checkbox"> Open access only
+      </label>
+    </div>
+
+    <button class="btn-reset">✕ Clear all filters</button>
+  </aside>
+
+  <!-- RESULTS -->
+  <main class="results">
+
+    <div class="sort-bar">
+      <div class="sort-bar-left">
+        <span>Sort by:</span>
+        <select>
+          <option>Most Recent</option>
+          <option>Oldest First</option>
+          <option>Most Cited</option>
+          <option>Relevance</option>
+        </select>
+      </div>
+      <button class="export-btn">↓ Export results</button>
+    </div>
+
+    <div class="cards">
+
+      <!-- PAPER -->
+      <div class="card paper">
+        <div class="card-main">
+          <div class="card-top">
+            <span class="badge">📄 Paper</span>
+            <span class="card-year">2024</span>
+          </div>
+          <h3>Machine Learning for Early Cancer Detection in Radiological Imaging</h3>
+          <div class="card-meta">
+            <strong>Smith, J., Patel, A.</strong> et al. · Computer Science · <em>Nature Digital Medicine</em>
+          </div>
+          <p class="desc">A deep learning framework applied to CT scans achieving 94.7% sensitivity in detecting early-stage malignancies across three hospital cohorts.</p>
+          <div class="tags">
+            <span>Deep Learning</span><span>Healthcare</span><span>Computer Vision</span>
+          </div>
+        </div>
+        <div class="card-actions">
+          <a href="#" class="view-link">View →</a>
+          <button class="save-btn" title="Save">☆</button>
+        </div>
+      </div>
+
+      <!-- THESIS -->
+      <div class="card thesis">
+        <div class="card-main">
+          <div class="card-top">
+            <span class="badge">🎓 Thesis</span>
+            <span class="card-year">2023</span>
+          </div>
+          <h3>Explainable AI in Urban Traffic Management: Policy and Practice</h3>
+          <div class="card-meta">
+            <strong>Rodriguez, C.</strong> · Urban Studies · <em>PhD Dissertation</em>
+          </div>
+          <p class="desc">Investigates how interpretable AI models can support transparent decision-making in smart city traffic systems, with case studies from Sheffield and Leeds.</p>
+          <div class="tags">
+            <span>XAI</span><span>Smart Cities</span><span>Transport</span>
+          </div>
+        </div>
+        <div class="card-actions">
+          <a href="#" class="view-link">View →</a>
+          <button class="save-btn" title="Save">☆</button>
+        </div>
+      </div>
+
+      <!-- PAPER -->
+      <div class="card paper">
+        <div class="card-main">
+          <div class="card-top">
+            <span class="badge">📄 Paper</span>
+            <span class="card-year">2023</span>
+          </div>
+          <h3>Reinforcement Learning for Adaptive Energy Management in Microgrids</h3>
+          <div class="card-meta">
+            <strong>Chen, L., Okafor, T.</strong> et al. · Engineering · <em>Applied Energy</em>
+          </div>
+          <p class="desc">A novel RL-based controller that reduces peak demand by 31% in a pilot microgrid deployment, outperforming rule-based baselines under dynamic pricing conditions.</p>
+          <div class="tags">
+            <span>Reinforcement Learning</span><span>Energy</span><span>Microgrids</span>
+          </div>
+        </div>
+        <div class="card-actions">
+          <a href="#" class="view-link">View →</a>
+          <button class="save-btn" title="Save">☆</button>
+        </div>
+      </div>
+
+      <!-- THESIS -->
+      <div class="card thesis">
+        <div class="card-main">
+          <div class="card-top">
+            <span class="badge">🎓 Thesis</span>
+            <span class="card-year">2022</span>
+          </div>
+          <h3>Bias Mitigation in Natural Language Processing for Low-Resource Languages</h3>
+          <div class="card-meta">
+            <strong>Mbeki, A.</strong> · Computer Science · <em>MRes Thesis</em>
+          </div>
+          <p class="desc">Examines representational harms in large language models for African language families and proposes a debiasing pipeline validated on Swahili and Yoruba corpora.</p>
+          <div class="tags">
+            <span>NLP</span><span>Fairness</span><span>Low-Resource AI</span>
+          </div>
+        </div>
+        <div class="card-actions">
+          <a href="#" class="view-link">View →</a>
+          <button class="save-btn" title="Save">☆</button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- PAGINATION -->
+    <nav class="pagination">
+      <a href="#" class="page-btn arrow">‹</a>
+      <a href="#" class="page-btn active">1</a>
+      <a href="#" class="page-btn">2</a>
+      <a href="#" class="page-btn">3</a>
+      <a href="#" class="page-btn">4</a>
+      <a href="#" class="page-btn">5</a>
+      <span style="color:var(--muted);font-size:.85rem;padding:0 .3rem">…</span>
+      <a href="#" class="page-btn">125</a>
+      <a href="#" class="page-btn arrow">›</a>
+    </nav>
+
+  </main>
+</div>
+
+<script>
+  // Toggle active state on paper/thesis buttons
+  document.querySelectorAll('.toggle').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.toggle').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+
+  // Bookmark toggle
+  document.querySelectorAll('.save-btn').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      btn.textContent = btn.textContent === '☆' ? '★' : '☆';
+      btn.style.color = btn.textContent === '★' ? '#e8a020' : '';
+    });
+  });
+
+  // Pagination active
+  document.querySelectorAll('.page-btn:not(.arrow)').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.page-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+</script>
+
+</body>
+</html>

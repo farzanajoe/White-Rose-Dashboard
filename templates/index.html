@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UrbanFit - Churn Prediction</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="logo">
+            <div class="logo-icon"></div>
+            <h1>🏋️UrbanFit</h1>
+        </div>
+        <div class="header-actions">
+            <button class="icon-btn">👤</button>
+            <button class="icon-btn menu-btn">☰</button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Hero Section -->
+        <div class="hero">
+            <h2>Will This Customer Churn?</h2>
+            <p class="subtitle">Let AI predict the probability of the customer churning.</p>
+        </div>
+
+        <!-- Form Card -->
+        <div class="card">
+            <div class="card-header">
+                <h3>Customer Details</h3>
+                <p class="text-muted">Tell us about the customer you're predicting</p>
+            </div>
+
+            <form id="predictionForm" class="prediction-form">
+                <div class="form-grid">
+
+                    <!-- Left Column -->
+                    <div class="form-column">
+
+                        <!-- Age -->
+                        <div class="form-group">
+                            <label for="age"><span class="label-number">1.</span> Age</label>
+                            <input type="number" id="age" name="age" placeholder="Enter age (e.g. 25)" min="1" required>
+                        </div>
+
+                        <!-- Gender -->
+                        <div class="form-group">
+                            <label for="gender"><span class="label-number">2.</span> Gender</label>
+                            <select id="gender" name="gender" required>
+                                <option value="">Select gender</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                            </select>
+                        </div>
+
+                        <!-- Location -->
+                        <div class="form-group">
+                            <label for="location"><span class="label-number">3.</span> Location</label>
+                            <input type="text" id="location" name="location" placeholder="Enter location (e.g. London)" required>
+                        </div>
+
+                        <!-- Tenure Months -->
+                        <div class="form-group">
+                            <label for="tenure_months"><span class="label-number">4.</span> Tenure Months</label>
+                            <input type="number" id="tenure_months" name="tenure_months" placeholder="e.g. 12" min="1" required>
+                        </div>
+
+                        <!-- Monthly Spend GBP -->
+                        <div class="form-group">
+                            <label for="monthly_spend_gbp"><span class="label-number">5.</span> Monthly Spend (£)</label>
+                            <input type="number" id="monthly_spend_gbp" name="monthly_spend_gbp" placeholder="e.g. 50" min="1" required>
+                        </div>
+
+                        <!-- Discount -->
+                        <div class="form-group">
+                            <label for="discount_received"><span class="label-number">6.</span> Discount Received</label>
+                            <select id="discount_received" name="discount_received" required>
+                                <option value="">Select option</option>
+                                <option value="1">Yes</option>
+                                <option value="0">No</option>
+                            </select>
+                        </div>
+
+                    </div>
+
+                    <!-- Right Column -->
+                    <div class="form-column">
+
+                        <!-- Average Weekly Sessions -->
+                        <div class="form-group">
+                            <label for="avg_weekly_sessions"><span class="label-number">7.</span> Average Weekly Sessions</label>
+                            <input type="number" id="avg_weekly_sessions" name="avg_weekly_sessions" placeholder="e.g. 3" min="0" required>
+                        </div>
+
+                        <!-- Days Since Last Login -->
+                        <div class="form-group">
+                            <label for="days_since_last_login"><span class="label-number">8.</span> Days Since Last Login</label>
+                            <input type="number" id="days_since_last_login" name="days_since_last_login" placeholder="e.g. 7" min="0" required>
+                        </div>
+
+                        <!-- App Engagement Type -->
+                        <div class="form-group">
+                            <label for="app_engagement_type"><span class="label-number">9.</span> App Engagement Type</label>
+                            <select id="app_engagement_type" name="app_engagement_type" required>
+                                <option value="">Select engagement type</option>
+                                <option value="Live Classes">Live Classes</option>
+                                <option value="Mixed">Mixed</option>
+                                <option value="On-Demand">On-Demand</option>
+                            </select>
+                        </div>
+
+                        <!-- Support Tickets -->
+                        <div class="form-group">
+                            <label for="support_tickets_last_6m"><span class="label-number">10.</span> Support Tickets Last 6 Months</label>
+                            <input type="number" id="support_tickets_last_6m" name="support_tickets_last_6m" placeholder="e.g. 2" min="0" required>
+                        </div>
+
+                        <!-- Plan Type -->
+                        <div class="form-group">
+                            <label for="plan_type"><span class="label-number">11.</span> Plan Type</label>
+                            <select id="plan_type" name="plan_type" required>
+                                <option value="">Select plan type</option>
+                                <option value="Basic">Basic</option>
+                                <option value="Standard">Standard</option>
+                                <option value="Premium">Premium</option>
+                            </select>
+                        </div>
+
+                        <!-- Referral Source -->
+                        <div class="form-group">
+                            <label for="referral_source"><span class="label-number">12.</span> Referral Source</label>
+                            <select id="referral_source" name="referral_source" required>
+                                <option value="">Select referral source</option>
+                                <option value="Friend Referral">Friend Referral</option>
+                                <option value="Influencer">Influencer</option>
+                                <option value="Paid Ad">Paid Ad</option>
+                                <option value="Social Media">Social Media</option>
+                            </select>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn-primary btn-large">
+                    <span class="btn-icon">📟 </span>
+                    PREDICT CUSTOMER CHURN
+                </button>
+            </form>
+        </div>
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="index.html" class="nav-item active">
+            <span class="nav-icon">📟</span>
+            <span class="nav-label">Predict</span>
+        </a>
+    </nav>
+
+    <script>
+        document.getElementById("predictionForm").addEventListener("submit", async function(e) {
+            e.preventDefault();
+
+            const data = {
+                age: document.getElementById("age").value,
+                gender: document.getElementById("gender").value,
+                location: document.getElementById("location").value,
+                tenure_months: document.getElementById("tenure_months").value,
+                monthly_spend_gbp: document.getElementById("monthly_spend_gbp").value,
+                avg_weekly_sessions: document.getElementById("avg_weekly_sessions").value,
+                days_since_last_login: document.getElementById("days_since_last_login").value,
+                app_engagement_type: document.getElementById("app_engagement_type").value,
+                support_tickets_last_6m: document.getElementById("support_tickets_last_6m").value,
+                plan_type: document.getElementById("plan_type").value,
+                discount_received: document.getElementById("discount_received").value,
+                referral_source: document.getElementById("referral_source").value
+            };
+
+            const response = await fetch("/predict", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+            sessionStorage.setItem("churnResult", JSON.stringify(result));
+            window.location.href = "/result";
+        });
+    </script>
+</body>
+</html>
