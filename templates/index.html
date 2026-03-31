@@ -69,5 +69,181 @@
     </div>
   </div>
 
+ <!-- =============================================
+       RECENT PUBLICATIONS
+       Data comes from your backend — replace the
+       placeholder cards below with a server-side
+       loop (Jinja2, PHP, etc.) or a fetch() call.
+  ============================================= -->
+  <section class="publications-section" aria-label="Recent Publications">
+
+    <!-- Header -->
+    <div class="pub-section-header">
+      <div class="pub-section-left">
+        <p class="pub-eyebrow">Open Access Repository</p>
+        <h2>Recent Publications</h2>
+      </div>
+      <a href="#" class="pub-view-all">View all publications →</a>
+    </div>
+
+    <!-- Filter pills -->
+    <div class="pub-filter-bar" role="group" aria-label="Filter by type">
+      <button class="pub-filter-btn active" data-filter="all">All</button>
+      <button class="pub-filter-btn" data-filter="article">Journal Articles</button>
+      <button class="pub-filter-btn" data-filter="thesis">Theses</button>
+      <button class="pub-filter-btn" data-filter="report">Reports</button>
+      <button class="pub-filter-btn" data-filter="dataset">Datasets</button>
+    </div>
+
+    <!-- Cards grid
+         BACKEND NOTE: render one .pub-card per row from your DB query.
+         Required data attributes on <article>:
+           data-type  → "article" | "thesis" | "report" | "dataset"
+           data-uni   → "leeds"   | "sheffield" | "york"
+    -->
+    <div class="pub-grid" id="pubGrid">
+
+      <!-- Card 1 -->
+      <article class="pub-card" data-type="article" data-uni="leeds" tabindex="0">
+        <div class="pub-card-top">
+          <span class="pub-type-badge article">Journal Article</span>
+          <span class="pub-uni-tag leeds">University of Leeds</span>
+        </div>
+        <h3 class="pub-card-title">Deep Learning Approaches for Early Detection of Alzheimer's Disease Using MRI Biomarkers</h3>
+        <p class="pub-card-authors">
+          <span class="lead-author">Dr. Sarah Mitchell</span>, Prof. James Hartley, Dr. Priya Nair
+        </p>
+        <p class="pub-card-excerpt">
+          A convolutional neural network pipeline trained on 4,200 structural MRI scans identifies early-stage amyloid plaque formations with 91% sensitivity prior to clinical symptom onset.
+        </p>
+        <div class="pub-card-footer">
+          <span class="pub-card-date">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            15 Mar 2026
+          </span>
+          <a href="#" class="pub-card-link">Read more →</a>
+        </div>
+      </article>
+
+      <!-- Card 2 -->
+      <article class="pub-card" data-type="article" data-uni="sheffield" tabindex="0">
+        <div class="pub-card-top">
+          <span class="pub-type-badge article">Journal Article</span>
+          <span class="pub-uni-tag sheffield">University of Sheffield</span>
+        </div>
+        <h3 class="pub-card-title">Carbon Capture Efficiency in Post-Industrial Urban Green Corridors</h3>
+        <p class="pub-card-authors">
+          <span class="lead-author">Dr. Amara Osei</span>, Prof. Lena Brauer
+        </p>
+        <p class="pub-card-excerpt">
+          Field measurements across 14 urban sites in Northern England reveal strategically planted green corridors can sequester up to 3.4 tonnes of CO₂ per hectare annually.
+        </p>
+        <div class="pub-card-footer">
+          <span class="pub-card-date">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            10 Mar 2026
+          </span>
+          <a href="#" class="pub-card-link">Read more →</a>
+        </div>
+      </article>
+
+      <!-- Card 3 -->
+      <article class="pub-card" data-type="thesis" data-uni="york" tabindex="0">
+        <div class="pub-card-top">
+          <span class="pub-type-badge thesis">Thesis</span>
+          <span class="pub-uni-tag york">University of York</span>
+        </div>
+        <h3 class="pub-card-title">Identity, Migration, and the Politics of Belonging in Post-Brexit Northern England</h3>
+        <p class="pub-card-authors">
+          <span class="lead-author">Fatima Al-Rashid</span>
+        </p>
+        <p class="pub-card-excerpt">
+          A mixed-methods ethnographic study examining how EU migrants in Leeds, Sheffield, and York negotiate civic identity, drawing on 80 in-depth interviews conducted 2021–2024.
+        </p>
+        <div class="pub-card-footer">
+          <span class="pub-card-date">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            4 Mar 2026
+          </span>
+          <a href="#" class="pub-card-link">Read more →</a>
+        </div>
+      </article>
+
+      <!-- Card 4 -->
+      <article class="pub-card" data-type="report" data-uni="leeds" tabindex="0">
+        <div class="pub-card-top">
+          <span class="pub-type-badge report">Report</span>
+          <span class="pub-uni-tag leeds">University of Leeds</span>
+        </div>
+        <h3 class="pub-card-title">Yorkshire Regional Transport Decarbonisation: 2025 Progress Report</h3>
+        <p class="pub-card-authors">
+          <span class="lead-author">Prof. Daniel Okafor</span>, Dr. Rhiannon Price, Dr. Kofi Mensah
+        </p>
+        <p class="pub-card-excerpt">
+          Annual benchmarking of transport emissions across Yorkshire against 2030 Net Zero targets, evaluating the impact of the Leeds Electric Bus Fleet rollout on urban air quality.
+        </p>
+        <div class="pub-card-footer">
+          <span class="pub-card-date">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            28 Feb 2026
+          </span>
+          <a href="#" class="pub-card-link">Read more →</a>
+        </div>
+      </article>
+
+      <!-- Card 5 -->
+      <article class="pub-card" data-type="dataset" data-uni="sheffield" tabindex="0">
+        <div class="pub-card-top">
+          <span class="pub-type-badge dataset">Dataset</span>
+          <span class="pub-uni-tag sheffield">University of Sheffield</span>
+        </div>
+        <h3 class="pub-card-title">UK Wind Turbine Performance Dataset 2015–2025: Hourly Output and Maintenance Logs</h3>
+        <p class="pub-card-authors">
+          <span class="lead-author">Dr. Ingrid Svensson</span>, Prof. Tom Barker
+        </p>
+        <p class="pub-card-excerpt">
+          Hourly power output records from 312 onshore turbines across the UK, including structured maintenance logs, weather correlations, and downtime classifications over a decade.
+        </p>
+        <div class="pub-card-footer">
+          <span class="pub-card-date">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            20 Feb 2026
+          </span>
+          <a href="#" class="pub-card-link">Read more →</a>
+        </div>
+      </article>
+
+      <!-- Card 6 -->
+      <article class="pub-card" data-type="thesis" data-uni="sheffield" tabindex="0">
+        <div class="pub-card-top">
+          <span class="pub-type-badge thesis">Thesis</span>
+          <span class="pub-uni-tag sheffield">University of Sheffield</span>
+        </div>
+        <h3 class="pub-card-title">Quantum Error Correction in Superconducting Qubit Arrays: Novel Surface Code Implementations</h3>
+        <p class="pub-card-authors">
+          <span class="lead-author">Marcus Chen</span>
+        </p>
+        <p class="pub-card-excerpt">
+          Proposes and experimentally validates a modified rotated surface code reducing logical error rates by 34% in near-term superconducting quantum processors operating at 15 mK.
+        </p>
+        <div class="pub-card-footer">
+          <span class="pub-card-date">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            12 Feb 2026
+          </span>
+          <a href="#" class="pub-card-link">Read more →</a>
+        </div>
+      </article>
+
+      <!-- Empty state (JS shows this when filter returns nothing) -->
+      <div class="pub-empty" id="pubEmpty" aria-live="polite">
+        No publications found for this filter.
+      </div>
+
+    </div><!-- /pub-grid -->
+  </section>
+  <!-- ===== END RECENT PUBLICATIONS ===== -->
+
+
 </body>
 </html>
