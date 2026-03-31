@@ -1,179 +1,247 @@
-/* 🌍 GLOBAL */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,600;1,700&display=swap');
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
 body {
-    font-family: 'Segoe UI', sans-serif;
-    margin: 0;
-    background: #f4f6fb;
-    color: #333;
+  font-family: 'Inter', system-ui, sans-serif;
+  background-color: #eeecea;
 }
 
-/* 🔝 TOP BAR */
-.topbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 30px;
-    background: linear-gradient(90deg, #4b0082, #6a0dad);
-    color: white;
+/* Top Bar */
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #0f2540;
+  color: white;
+  padding: 13px 28px;
 }
 
-.topbar h1 {
-    margin: 0;
+.top-bar .left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
-.search-area input {
-    padding: 10px;
-    border-radius: 8px;
-    border: none;
-    width: 250px;
+.top-bar-icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.search-area button {
-    margin-left: 10px;
-    padding: 10px 14px;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
+.top-bar h1 {
+  font-size: 17px;
+  font-weight: 500;
+  font-family: 'Inter', sans-serif;
 }
 
-/* TOGGLE BUTTONS */
-.toggle {
-    background: #ddd;
+.top-bar h1 .brand-name {
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  font-size: 19px;
 }
 
-.toggle.active {
-    background: #ffcc00;
-    color: black;
+.top-bar .right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
-/* 🧭 HEADER */
-.results-header {
-    padding: 25px 30px;
-    background: white;
-    border-bottom: 1px solid #eee;
+.top-bar a {
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  font-size: 13px;
+  padding: 6px 12px;
+  border-radius: 6px;
 }
 
-/* 🧱 LAYOUT */
-.container {
-    display: flex;
+.top-bar a:hover {
+  background: rgba(255, 255, 255, 0.1);
 }
 
-/* 🎛 SIDEBAR */
-.filters {
-    width: 260px;
-    padding: 20px;
-    background: white;
-    border-right: 1px solid #eee;
+.top-bar .divider {
+  color: rgba(255, 255, 255, 0.25);
+  font-size: 13px;
 }
 
-.filters h3 {
-    margin-top: 0;
+/* Logos */
+.logos {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 18px 40px;
+  background: #f5f5f3;
+  border-bottom: 1px solid #ddd;
 }
 
-.filters label {
-    font-weight: bold;
-    display: block;
-    margin-top: 15px;
+.logo-item {
+  font-family: 'Inter', sans-serif;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.8px;
+  color: #1a1a2e;
+  text-align: center;
 }
 
-/* 📊 RESULTS */
-.results {
-    flex: 1;
-    padding: 25px;
+.logo-divider {
+  width: 1px;
+  height: 36px;
+  background: #ddd;
 }
 
-/* SORT BAR */
-.sort-bar {
-    margin-bottom: 20px;
-    font-weight: bold;
+/* Hero */
+.hero {
+  background: linear-gradient(135deg, #0a1628 0%, #0f2540 30%, #1a3a6b 65%, #1e4d8c 100%);
+  padding: 64px 48px 72px;
+  position: relative;
+  overflow: hidden;
 }
 
-/* 📄 CARDS GRID */
-.cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 20px;
+.hero-eyebrow {
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 14px;
+  font-weight: 500;
 }
 
-/* 🧾 CARD */
-.card {
-    background: white;
-    padding: 18px;
-    border-radius: 16px;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.06);
-    transition: 0.25s ease;
-    position: relative;
-    overflow: hidden;
+.hero h2 {
+  font-family: 'Playfair Display', serif;
+  font-style: normal;
+  font-size: 38px;
+  font-weight: 700;
+  color: white;
+  line-height: 1.2;
+  margin-bottom: 10px;
+  text-transform: none;
+  letter-spacing: 0;
+  white-space: nowrap; /* ADDED - keeps it one line */
 }
 
-/* HOVER EFFECT */
-.card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+.filter-chip {
+  padding: 8px 22px; /* CHANGED - was 5px 14px */
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 14px; /* CHANGED - was 12px */
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.08);
+  font-family: 'Inter', sans-serif;
 }
 
-/* 🟣 PAPER STYLE */
-.paper {
-    border-left: 6px solid #8000ff;
+.search-bar {
+  display: flex;
+  max-width: 720px; /* CHANGED from 560px */
+  width: 100%;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
 }
 
-.paper .badge {
-    color: #8000ff;
+.hero-sub {
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 36px;
+  max-width: 480px;
+  line-height: 1.6;
 }
 
-/* 🔵 THESIS STYLE */
-.thesis {
-    border-left: 6px solid #007bff;
+
+.search-bar input {
+  flex: 1;
+  padding: 14px 18px;
+  font-size: 14px;
+  border: none;
+  outline: none;
+  font-family: 'Inter', sans-serif;
+  color: #1a1a1a;
 }
 
-.thesis .badge {
-    color: #007bff;
+.search-bar input::placeholder {
+  color: #aaa;
 }
 
-/* BADGE */
-.badge {
-    font-size: 13px;
-    font-weight: bold;
+.search-bar button {
+  padding: 14px 24px;
+  background: #1a4a7a;
+  color: white;
+  border: none;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  cursor: pointer;
 }
 
-/* TITLE */
-.card h3 {
-    margin: 10px 0;
+.search-bar button:hover {
+  background: #0f2540;
 }
 
-/* TAGS */
-.tags {
-    margin-top: 10px;
+/* Filter Chips */
+.search-filters {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
 }
 
-.tags span {
-    display: inline-block;
-    background: #eef1f7;
-    padding: 6px 10px;
-    margin-right: 5px;
-    border-radius: 20px;
-    font-size: 12px;
+.filter-chip.active {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.5);
+  color: white;
 }
 
-/* LINK */
-.card a {
-    display: inline-block;
-    margin-top: 10px;
-    text-decoration: none;
-    font-weight: bold;
-    color: #555;
+/* Stats Bar */
+.stats-bar {
+  display: flex;
+  background: #f5f5f3;
+  border-bottom: 1px solid #e0e0e0;
 }
 
-.card a:hover {
-    color: black;
+.stat {
+  flex: 1;
+  padding: 18px 24px;
+  text-align: center;
+  border-right: 1px solid #e0e0e0;
 }
 
-/* 🎨 EXTRA: COLOURED TAGS */
-.paper .tags span {
-    background: #f3e8ff;
-    color: #6a0dad;
+.stat:last-child {
+  border-right: none;
 }
 
-.thesis .tags span {
-    background: #e6f0ff;
-    color: #0056b3;
+.stat .num {
+  font-size: 22px;
+  font-weight: 700;
+  color: #0f2540;
+  font-family: 'Playfair Display', serif;
 }
+
+.stat .lbl {
+  font-size: 11px;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-top: 2px;
+  font-family: 'Inter', sans-serif;
+}
+
+.hero {
+  background: linear-gradient(135deg, #0a1628 0%, #0f2540 30%, #1a3a6b 65%, #1e4d8c 100%);
+  padding: 64px 48px 72px;
+  position: relative;
+  overflow: hidden;
+
+  /* ADD THESE TWO: */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
