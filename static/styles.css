@@ -22,9 +22,24 @@ body {
 }
 
 .top-bar .left {
+  flex: 1;
   display: flex;
   align-items: center;
-  gap: 10px;
+}
+
+.top-bar .center {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.top-bar .right {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 6px;
 }
 
 .top-bar-icon {
