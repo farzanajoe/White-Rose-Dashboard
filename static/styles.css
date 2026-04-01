@@ -576,6 +576,7 @@ body {
   opacity: 1;
 }
 
+
 /* Card top row: badge + uni */
 .pub-card-top {
   display: flex;
@@ -690,6 +691,37 @@ body {
 
 .pub-card-link:hover {
   gap: 8px;
+}
+
+/* Empty state */
+.pub-empty {
+  display: none;
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 60px 20px;
+  color: #aaa;
+  font-size: 0.9rem;
+}
+
+/* ── Bookmark / Save star ── */
+.pub-bookmark {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  font-size: 18px;
+  line-height: 1;
+  color: #ccc;
+  transition: color 0.2s, transform 0.15s;
+}
+
+.pub-bookmark:hover {
+  color: #1a4a7a;
+  transform: scale(1.2);
+}
+
+.pub-bookmark.saved {
+  color: #1a4a7a;
 }
 
 /* Empty state */
