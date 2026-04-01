@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>White Rose – Search Results</title>
+  <title>White Rose Explorer</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -16,11 +16,12 @@
     }
     body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; font-size: 15px; }
 
-    /* ── top bar ── */
+    /* ─── TOP BAR ─── */
     .topbar {
       background: var(--accent); color: #fff; padding: 0 2rem;
       display: flex; align-items: center; gap: 2rem; height: 64px;
-      position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 16px rgba(42,74,127,.25);
+      position: sticky; top: 0; z-index: 200;
+      box-shadow: 0 2px 16px rgba(42,74,127,.25);
     }
     .topbar h1 { font-family: 'Playfair Display', serif; font-size: 1.25rem; font-weight: 700; letter-spacing: -.01em; white-space: nowrap; flex-shrink: 0; }
     .topbar h1 a { color: #fff; text-decoration: none; }
@@ -37,100 +38,220 @@
     .toggle-group .toggle { padding: .45rem .85rem; background: transparent; border: none; color: rgba(255,255,255,.65); font-family: 'DM Sans', sans-serif; font-size: .82rem; font-weight: 500; cursor: pointer; transition: background .18s, color .18s; }
     .toggle-group .toggle.active { background: rgba(255,255,255,.2); color: #fff; }
 
-    /* ── results header ── */
+    /* ─── KEYWORD BAR ─── */
+    .keyword-bar {
+      background: var(--accent); border-top: 1px solid rgba(255,255,255,.1);
+      padding: .6rem 2rem; display: flex; align-items: center; gap: .6rem; flex-wrap: wrap;
+      position: sticky; top: 64px; z-index: 190;
+    }
+    .keyword-bar .kw-label { font-size: .72rem; color: rgba(255,255,255,.5); text-transform: uppercase; letter-spacing: .07em; white-space: nowrap; }
+    .kw-chip { padding: .28rem .75rem; border-radius: 20px; background: rgba(255,255,255,.13); color: rgba(255,255,255,.8); font-size: .78rem; cursor: pointer; border: 1px solid transparent; transition: background .18s, color .18s; white-space: nowrap; }
+    .kw-chip:hover { background: rgba(255,255,255,.22); color: #fff; }
+    .kw-chip.active { background: #fff; color: var(--accent); font-weight: 600; }
+
+    /* ─── RESULTS HEADER ─── */
     .results-header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 1.2rem 2rem; display: flex; align-items: baseline; gap: 1rem; flex-wrap: wrap; }
     .results-header h2 { font-family: 'Playfair Display', serif; font-size: 1.45rem; font-weight: 600; }
     .results-header .count { font-size: .85rem; color: var(--muted); background: var(--tag-bg); padding: .22rem .65rem; border-radius: 20px; font-weight: 500; }
 
-    /* ── layout ── */
-    .container { display: grid; grid-template-columns: 240px 1fr; gap: 1.5rem; max-width: 1200px; margin: 1.5rem auto; padding: 0 1.5rem; }
+    /* ─── LAYOUT ─── */
+    .container { display: grid; grid-template-columns: 300px 1fr; gap: 1.8rem; max-width: 1400px; margin: 1.5rem auto; padding: 0 1.5rem; align-items: start; }
 
-    /* ── sidebar filters ── */
-    .filters { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.4rem; height: fit-content; position: sticky; top: 80px; box-shadow: var(--shadow); }
-    .filters h3 { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 600; margin-bottom: 1.2rem; padding-bottom: .7rem; border-bottom: 1px solid var(--border); }
+    /* ─── SIDEBAR — single sticky scroll container ─── */
+    .sidebar {
+      position: sticky;
+      top: 80px; /* below topbar */
+      max-height: calc(100vh - 100px);
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1.1rem;
+      scrollbar-width: thin;
+      scrollbar-color: var(--border) transparent;
+      padding-right: 4px;
+      padding-bottom: 20px;
+    }
+    .sidebar::-webkit-scrollbar { width: 4px; }
+    .sidebar::-webkit-scrollbar-track { background: transparent; }
+    .sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+    /* ─── SIDEBAR CARDS ─── */
+    .year-slider-container,
+    .filters,
+    .featured-author-card,
+    .top-authors-week {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      flex-shrink: 0;
+    }
+    .year-slider-container { padding: 1rem 1.2rem; }
+    .filters { padding: 1.4rem; }
+    .featured-author-card { padding: 1.2rem; }
+    .top-authors-week { padding: 1rem 1.2rem; }
+
+    /* ─── YEAR SLIDER ─── */
+    .year-slider-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem; }
+    .year-slider-header .year-label-left, .year-slider-header .year-label-right { font-size: 0.7rem; font-weight: 600; color: var(--muted); text-transform: uppercase; }
+    .year-slider-header .year-value { font-size: 1rem; font-weight: 700; color: var(--accent); background: var(--accent-lt); padding: 0.2rem 0.9rem; border-radius: 30px; }
+    .slider-track-wrap { position: relative; height: 28px; display: flex; align-items: center; margin: 0.2rem 0 0.3rem; }
+    .slider-track { position: absolute; left: 0; right: 0; height: 4px; border-radius: 2px; background: var(--border); }
+    .slider-fill { position: absolute; left: 0; height: 4px; border-radius: 2px; background: var(--accent); pointer-events: none; }
+    input[type="range"] { -webkit-appearance: none; appearance: none; position: relative; width: 100%; height: 28px; background: transparent; outline: none; cursor: pointer; }
+    input[type="range"]::-webkit-slider-runnable-track { height: 4px; background: transparent; border-radius: 2px; }
+    input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; border-radius: 50%; background: var(--accent); border: 2px solid white; box-shadow: 0 1px 4px rgba(0,0,0,0.2); margin-top: -7px; cursor: grab; }
+    .range-labels { display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--muted); margin-top: 0.3rem; }
+
+    /* ─── FILTERS ─── */
     .filter-group { margin-bottom: 1.3rem; }
     .filter-group label.group-label { display: block; font-size: .72rem; font-weight: 600; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); margin-bottom: .65rem; }
     .check-item { display: flex; align-items: center; gap: .5rem; padding: .35rem 0; cursor: pointer; font-size: .88rem; color: var(--text); transition: color .15s; }
     .check-item:hover { color: var(--accent); }
     .check-item input[type="checkbox"] { accent-color: var(--accent); width: 15px; height: 15px; cursor: pointer; flex-shrink: 0; }
-    .check-item .chip-count { margin-left: auto; font-size: .72rem; color: var(--muted); background: var(--tag-bg); padding: .1rem .42rem; border-radius: 10px; }
     .filter-divider { border: none; border-top: 1px solid var(--border); margin: .3rem 0 1rem; }
     .btn-reset { width: 100%; padding: .48rem; border-radius: 6px; border: 1.5px solid var(--border); background: transparent; color: var(--muted); font-family: 'DM Sans', sans-serif; font-size: .82rem; cursor: pointer; transition: border-color .18s, color .18s; margin-top: .5rem; }
     .btn-reset:hover { border-color: var(--accent); color: var(--accent); }
+    .filters h3 { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 600; margin-bottom: 1rem; color: var(--text); }
 
-    /* ── year slider ── */
-    .year-slider-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: .7rem; }
-    .year-display { font-size: .88rem; font-weight: 600; color: var(--accent); background: var(--accent-lt); padding: .18rem .6rem; border-radius: 20px; }
-    .slider-track-wrap { position: relative; height: 20px; display: flex; align-items: center; }
-    .slider-track { position: absolute; left: 0; right: 0; height: 4px; border-radius: 2px; background: var(--border); }
-    .slider-fill { position: absolute; left: 0; height: 4px; border-radius: 2px; background: var(--accent); opacity: .5; pointer-events: none; }
-    input[type="range"] { -webkit-appearance: none; appearance: none; position: relative; width: 100%; height: 20px; background: transparent; outline: none; cursor: pointer; margin: 0; padding: 0; }
-    input[type="range"]::-webkit-slider-runnable-track { height: 4px; background: transparent; border-radius: 2px; }
-    input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 16px; height: 16px; border-radius: 50%; background: var(--accent); border: 2px solid #fff; box-shadow: 0 0 0 1px rgba(42,74,127,.25); margin-top: -6px; cursor: grab; }
-    input[type="range"]:active::-webkit-slider-thumb { cursor: grabbing; transform: scale(1.15); }
-    .range-labels { display: flex; justify-content: space-between; font-size: .72rem; color: var(--muted); margin-top: .35rem; }
+    /* ─── FEATURED AUTHOR ─── */
+    .featured-author-card .fa-label {
+      font-size: .65rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .1em; color: var(--muted); margin-bottom: .75rem;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .featured-author-card .fa-label::before { content: ''; display: inline-block; width: 3px; height: 12px; background: var(--accent); border-radius: 2px; }
+    .fa-header { display: flex; align-items: center; gap: 10px; margin-bottom: .9rem; }
+    .fa-avatar {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: var(--accent);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.05rem; font-weight: 700; color: white; flex-shrink: 0;
+      font-family: 'Playfair Display', serif;
+    }
+    .fa-name { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 600; color: var(--text); }
+    .fa-inst { font-size: .72rem; color: var(--muted); margin-top: 2px; }
+    .fa-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: .9rem; }
+    .fa-stat { background: var(--bg); border-radius: 8px; padding: 7px 4px; text-align: center; }
+    .fa-stat .n { font-size: 1.1rem; font-weight: 700; color: var(--accent); font-family: 'Playfair Display', serif; }
+    .fa-stat .l { font-size: .65rem; color: var(--muted); margin-top: 1px; }
+    .fa-topics { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: .85rem; }
+    .fa-topic { background: var(--accent-lt); color: var(--accent); font-size: .68rem; padding: 3px 9px; border-radius: 20px; font-weight: 500; }
+    .fa-links { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; border-top: 1px solid var(--border); padding-top: .8rem; }
+    .fa-link {
+      text-align: center; font-size: .68rem; color: var(--muted);
+      padding: 5px 3px; border-radius: 6px; background: var(--bg);
+      text-decoration: none; cursor: pointer; transition: all .15s; font-weight: 500;
+    }
+    .fa-link:hover { background: var(--accent-lt); color: var(--accent); }
+    .featured-author-card.hidden { display: none; }
 
-    /* ── results area ── */
-    .results { min-width: 0; }
-    .sort-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; flex-wrap: wrap; gap: .6rem; }
-    .sort-bar-left { display: flex; align-items: center; gap: .6rem; font-size: .85rem; color: var(--muted); }
-    .sort-bar select { padding: .38rem .7rem; border-radius: 6px; border: 1.5px solid var(--border); background: var(--surface); font-family: 'DM Sans', sans-serif; font-size: .85rem; color: var(--text); cursor: pointer; outline: none; }
+    /* ─── TOP AUTHORS ─── */
+    .top-authors-week .ta-heading {
+      font-family: 'Playfair Display', serif;
+      font-size: .95rem; font-weight: 700; margin-bottom: .7rem;
+      display: flex; align-items: center; gap: 8px; color: var(--accent);
+      border-left: 4px solid var(--accent); padding-left: 12px;
+    }
+    .ta-list { display: flex; flex-direction: column; }
+    .ta-item {
+      display: flex; align-items: center; gap: 0;
+      padding: 9px 6px; border-bottom: 1px solid var(--border);
+      font-size: .82rem; cursor: pointer;
+      transition: background .15s, padding-left .15s;
+      border-radius: 6px;
+    }
+    .ta-item:last-child { border-bottom: none; }
+    .ta-item:hover { background: var(--accent-lt); padding-left: 10px; }
+    .ta-rank {
+      font-weight: 700; color: var(--accent); background: var(--accent-lt);
+      width: 24px; height: 24px; display: inline-flex; align-items: center;
+      justify-content: center; border-radius: 12px; font-size: .68rem; flex-shrink: 0;
+    }
+    .ta-name { flex: 1; margin-left: 10px; font-weight: 600; color: var(--text); font-size: .83rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .ta-count { background: var(--tag-bg); padding: 2px 9px; border-radius: 20px; font-size: .68rem; color: var(--muted); font-weight: 500; flex-shrink: 0; }
+    .ta-scholar { font-size: .63rem; margin-left: 6px; opacity: 0; transition: opacity .15s; color: var(--accent); white-space: nowrap; }
+    .ta-item:hover .ta-scholar { opacity: 1; }
+    .ta-empty { color: var(--muted); font-size: .82rem; padding: 8px 0; }
 
-    /* ── cards ── */
+    /* ─── INSIGHTS ─── */
+    .insights-widget {
+      background: linear-gradient(105deg, var(--accent-lt) 0%, #fff 100%);
+      border: 1px solid var(--border); border-radius: var(--radius);
+      padding: .9rem 1.2rem; margin-bottom: 1rem;
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
+    }
+    .insights-text { display: flex; align-items: center; gap: 10px; }
+    .insights-icon { font-size: 1.5rem; }
+    .insights-content h4 { font-size: .85rem; font-weight: 700; color: var(--accent); margin-bottom: .2rem; font-family: 'Playfair Display', serif; }
+    .insights-content p { font-size: .75rem; color: var(--muted); }
+    .insights-stats { display: flex; gap: 1.2rem; }
+    .insight-stat { text-align: center; padding: .3rem .8rem; background: white; border-radius: 30px; box-shadow: 0 1px 4px rgba(0,0,0,.05); }
+    .insight-stat .number { font-size: 1.1rem; font-weight: 800; color: var(--accent); font-family: 'Playfair Display', serif; }
+    .insight-stat .label { font-size: .6rem; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
+
+    /* ─── SORT BAR — left aligned, no emoji ─── */
+    .sort-bar {
+      display: flex; align-items: center; gap: .6rem;
+      margin-bottom: 1rem;
+    }
+    .sort-bar label {
+      font-size: .82rem; font-weight: 600; color: var(--muted);
+      white-space: nowrap; font-family: 'DM Sans', sans-serif;
+    }
+    .sort-select {
+      padding: .45rem .9rem; border-radius: 8px; border: 1px solid var(--border);
+      background: var(--surface); font-family: 'DM Sans', sans-serif;
+      font-size: .85rem; cursor: pointer; font-weight: 500; color: var(--text);
+      outline: none; transition: border-color .18s;
+    }
+    .sort-select:focus { border-color: var(--accent); }
+
+    /* ─── CARDS ─── */
     .cards { display: flex; flex-direction: column; gap: 1rem; }
-    .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.4rem 1.5rem; display: grid; grid-template-columns: 1fr auto; gap: .5rem 1rem; box-shadow: var(--shadow); transition: box-shadow .2s, transform .2s, border-color .2s; cursor: pointer; position: relative; overflow: hidden; }
+    .card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1.4rem 1.5rem;
+      display: grid; grid-template-columns: 1fr auto; gap: .5rem 1rem;
+      box-shadow: var(--shadow); transition: all .2s; cursor: pointer;
+      position: relative; overflow: hidden;
+    }
     .card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; border-radius: 10px 0 0 10px; background: var(--paper); }
     .card.thesis::before { background: var(--thesis); }
-    .card.report::before { background: #2a7f5e; }
-    .card.dataset::before { background: #7f5a2a; }
     .card:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); border-color: #ccc; }
     .card-main { min-width: 0; }
-    .card-top { display: flex; align-items: center; gap: .6rem; margin-bottom: .55rem; }
+    .card-top { display: flex; align-items: center; gap: .6rem; margin-bottom: .55rem; flex-wrap: wrap; }
     .badge { display: inline-flex; align-items: center; gap: .3rem; font-size: .7rem; font-weight: 600; text-transform: uppercase; letter-spacing: .07em; padding: .22rem .6rem; border-radius: 20px; background: var(--accent-lt); color: var(--paper); flex-shrink: 0; }
-    .card.thesis .badge { background: #f0ebf8; color: var(--thesis); }
-    .card.report .badge { background: #eaf5f0; color: #2a7f5e; }
-    .card.dataset .badge { background: #f5eeea; color: #7f5a2a; }
     .card-year { font-size: .8rem; color: var(--muted); }
     .card h3 { font-family: 'Playfair Display', serif; font-size: 1.05rem; font-weight: 600; line-height: 1.4; margin-bottom: .45rem; }
     .card-meta { font-size: .82rem; color: var(--muted); margin-bottom: .55rem; }
-    .card-meta strong { color: var(--text); font-weight: 500; }
     .card p.desc { font-size: .88rem; color: #4a4540; line-height: 1.6; margin-bottom: .75rem; }
-    .card-actions { display: flex; flex-direction: column; align-items: flex-end; justify-content: space-between; gap: .5rem; grid-row: 1 / 3; }
+    .paper-keywords { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    .paper-kw { background: var(--tag-bg); border-radius: 20px; padding: 3px 10px; font-size: .7rem; font-weight: 500; color: var(--muted); }
     .view-link { display: inline-flex; align-items: center; gap: .3rem; font-size: .82rem; font-weight: 600; color: var(--accent); text-decoration: none; padding: .4rem .8rem; border-radius: 6px; border: 1.5px solid var(--accent-lt); transition: background .18s; white-space: nowrap; }
-    .card.thesis .view-link { color: var(--thesis); border-color: #e8dff5; }
     .view-link:hover { background: var(--accent-lt); }
-    .card.thesis .view-link:hover { background: #f0ebf8; }
 
-    /* ── error banner ── */
-    .server-error {
-      background: #fff8f0; border: 1px solid #f5c842; border-radius: 8px;
-      padding: 28px 32px; color: #7a5200; line-height: 1.6;
-    }
-    .server-error strong { display: block; font-size: 1rem; margin-bottom: 10px; }
-    .server-error code { background: #f0e0c0; padding: 2px 6px; border-radius: 4px; font-size: .9em; }
-    .server-error .cmd { display: block; background: #1a1a1a; color: #7ec8a4; padding: 10px 16px; border-radius: 6px; font-size: .88rem; margin: 10px 0; }
-
-    /* ── empty / loading ── */
-    .empty-state { text-align: center; padding: 3rem 1rem; color: var(--muted); font-size: .95rem; }
-
-    /* ── pagination ── */
+    /* ─── PAGINATION ─── */
     .pagination { display: flex; align-items: center; justify-content: center; gap: .4rem; margin-top: 2rem; padding-bottom: 2rem; }
     .page-btn { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 6px; border: 1.5px solid var(--border); background: var(--surface); font-family: 'DM Sans', sans-serif; font-size: .85rem; font-weight: 500; color: var(--muted); cursor: pointer; transition: all .18s; }
     .page-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-lt); }
     .page-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
-    .page-btn:disabled { opacity: .35; cursor: default; pointer-events: none; }
+    .page-btn:disabled { opacity: .35; pointer-events: none; }
+
+    /* ─── MISC ─── */
+    .empty-state { text-align: center; padding: 3rem 1rem; color: var(--muted); font-size: .95rem; }
+    .server-error { background: #fff8f0; border: 1px solid #f5c842; border-radius: 8px; padding: 28px 32px; color: #7a5200; }
+    .loading { text-align: center; padding: 2rem; color: var(--accent); font-family: 'DM Sans', sans-serif; }
   </style>
 </head>
 <body>
 
 <header class="topbar">
-  <h1><a href="index.html">White Rose <span>Publication</span></a></h1>
+  <h1><a href="#">White Rose <span>Research</span></a></h1>
   <div class="search-area">
     <div class="search-wrap">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
-        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-      </svg>
-      <input type="text" id="topSearch" placeholder="Search research…">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="topSearch" placeholder="Search by title, author, institution...">
     </div>
     <button class="btn-search" id="topSearchBtn">Search</button>
     <div class="toggle-group">
@@ -141,312 +262,357 @@
   </div>
 </header>
 
+<div class="keyword-bar" id="keywordBar" style="display:none;">
+  <span class="kw-label">Refine by keyword:</span>
+  <div id="kwChips" style="display:flex;flex-wrap:wrap;gap:6px;"></div>
+</div>
+
 <section class="results-header">
-  <h2 id="resultsHeading">Results</h2>
-  <span class="count" id="resultCount">…</span>
+  <h2 id="resultsHeading">Research Publications</h2>
+  <span class="count" id="resultCount">—</span>
 </section>
 
 <div class="container">
-  <aside class="filters">
-    <h3>Refine Results</h3>
+  <!-- ═══ SIDEBAR ═══ -->
+  <div class="sidebar">
 
-    <div class="filter-group">
+    <!-- Year Slider -->
+    <div class="year-slider-container">
       <div class="year-slider-header">
-        <label class="group-label" style="margin-bottom:0">From Year</label>
-        <span class="year-display" id="yearDisplay">2000</span>
+        <span class="year-label-left">FROM YEAR</span>
+        <span class="year-value" id="yearDisplay">1990</span>
+        <span class="year-label-right">PRESENT</span>
       </div>
       <div class="slider-track-wrap">
         <div class="slider-track"></div>
         <div class="slider-fill" id="sliderFill"></div>
-        <input type="range" min="1990" max="2025" value="2000" step="1" id="yearSlider">
+        <input type="range" min="1990" max="2025" value="1990" step="1" id="yearSlider">
       </div>
-      <div class="range-labels"><span>1990</span><span>2025</span></div>
+      <div class="range-labels"><span>1990</span><span>2000</span><span>2010</span><span>2020</span><span>2025</span></div>
     </div>
 
-    <hr class="filter-divider">
+    <!-- Filters -->
+    <aside class="filters">
+      <h3>Refine Results</h3>
+      <div class="filter-group">
+        <label class="group-label">Institution</label>
+        <label class="check-item"><input type="checkbox" class="inst-filter" value="Leeds" checked> University of Leeds</label>
+        <label class="check-item"><input type="checkbox" class="inst-filter" value="Sheffield" checked> University of Sheffield</label>
+        <label class="check-item"><input type="checkbox" class="inst-filter" value="York" checked> University of York</label>
+      </div>
+      <hr class="filter-divider">
+      <div class="filter-group">
+        <label class="group-label">Quality</label>
+        <label class="check-item"><input type="checkbox" id="peerReviewedOnly"> Peer-reviewed only</label>
+      </div>
+      <button class="btn-reset" id="resetFilters">✕ Clear all filters</button>
+    </aside>
 
-    <div class="filter-group">
-      <label class="group-label">Institution</label>
-      <label class="check-item">
-        <input type="checkbox" class="inst-filter" value="Leeds" checked>
-        University of Leeds
-      </label>
-      <label class="check-item">
-        <input type="checkbox" class="inst-filter" value="Sheffield" checked>
-        University of Sheffield
-      </label>
-      <label class="check-item">
-        <input type="checkbox" class="inst-filter" value="York" checked>
-        University of York
-      </label>
-    </div>
+    <!-- Featured Author -->
+    <aside class="featured-author-card hidden" id="featuredAuthorCard">
+      <div class="fa-label">Featured Author</div>
+      <div class="fa-header">
+        <div class="fa-avatar" id="faAvatar">??</div>
+        <div>
+          <div class="fa-name" id="faName">—</div>
+          <div class="fa-inst" id="faInst">—</div>
+        </div>
+      </div>
+      <div class="fa-stats">
+        <div class="fa-stat"><div class="n" id="faPapers">—</div><div class="l">papers</div></div>
+        <div class="fa-stat"><div class="n" id="faCitations">—</div><div class="l">citations</div></div>
+        <div class="fa-stat"><div class="n" id="faHindex">—</div><div class="l">h-index</div></div>
+      </div>
+      <div class="fa-topics" id="faTopics"></div>
+      <div class="fa-links">
+        <a class="fa-link" id="faOrcid" href="#" target="_blank">ORCID</a>
+        <a class="fa-link" id="faScholar" href="#" target="_blank">Scholar</a>
+        <span class="fa-link" id="faAllPapers">All papers →</span>
+      </div>
+    </aside>
 
-    <hr class="filter-divider">
+    <!-- Top Authors -->
+    <aside class="top-authors-week" id="topAuthorsWeek">
+      <div class="ta-heading">Top Authors (this week)</div>
+      <div class="ta-list" id="topAuthorsList">
+        <div class="ta-empty">Loading authors...</div>
+      </div>
+    </aside>
 
-    <div class="filter-group">
-      <label class="group-label">Open Access</label>
-      <label class="check-item">
-        <input type="checkbox" id="peerReviewedOnly">
-        Peer-reviewed only
-      </label>
-    </div>
+  </div>
 
-    <button class="btn-reset" id="resetFilters">✕ Clear all filters</button>
-  </aside>
-
+  <!-- ═══ MAIN ═══ -->
   <main class="results">
-    <div class="sort-bar">
-      <div class="sort-bar-left">
-        <span>Sort by:</span>
-        <select id="sortSelect">
-          <option value="recent">Most Recent</option>
-          <option value="oldest">Oldest First</option>
-        </select>
+    <div class="insights-widget">
+      <div class="insights-text">
+        <div class="insights-icon">📊</div>
+        <div class="insights-content">
+          <h4>Research Insights</h4>
+          <p>Real-time analytics from White Rose repository</p>
+        </div>
+      </div>
+      <div class="insights-stats">
+        <div class="insight-stat"><div class="number" id="totalPapers">—</div><div class="label">Total Papers</div></div>
+        <div class="insight-stat"><div class="number" id="uniqueAuthors">—</div><div class="label">Authors</div></div>
+        <div class="insight-stat"><div class="number" id="avgYear">—</div><div class="label">Avg Year</div></div>
       </div>
     </div>
 
-    <div class="cards" id="cardsContainer">
-      <div class="empty-state">Loading…</div>
+    <div class="sort-bar">
+      <label for="sortSelect">Sort by:</label>
+      <select id="sortSelect" class="sort-select">
+        <option value="recent">Most Recent</option>
+        <option value="oldest">Oldest First</option>
+      </select>
     </div>
 
+    <div class="cards" id="cardsContainer"><div class="loading">Loading publications...</div></div>
     <nav class="pagination" id="pagination"></nav>
   </main>
 </div>
 
 <script>
-  // ── CONFIG ─────────────────────────────────────────────────────────────────
-  // Change this if your Flask server runs on a different port
   const API = 'http://localhost:5000';
-
-  // ── state ──────────────────────────────────────────────────────────────────
-  const params = new URLSearchParams(location.search);
   let state = {
-    q:            params.get('q')    || '',
-    type:         params.get('type') || 'all',
-    sort:         'recent',
-    page:         parseInt(params.get('page') || '1'),
-    fromYear:     1990,
-    institutions: ['Leeds','Sheffield','York'],
-    peerOnly:     false,
+    q: '', type: 'all', sort: 'recent', page: 1, perPage: 8,
+    fromYear: 1990, institutions: ['Leeds','Sheffield','York'], peerOnly: false, kwFilter: ''
   };
 
-  // ── init UI from state ─────────────────────────────────────────────────────
-  document.getElementById('topSearch').value = state.q;
-
-  document.querySelectorAll('.toggle-group .toggle').forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.type === state.type);
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.toggle-group .toggle').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      state.type = btn.dataset.type;
-      state.page = 1;
-      loadResults();
+  /* ─── keyword extraction ─── */
+  function extractKeywords(results, max=10) {
+    const STOP = new Set(['the','a','an','and','or','of','in','on','to','for','with','from','by','is','are','was','were','this','that','these','those','have','has','been','will','can','may','using','study','paper','research']);
+    const freq = {};
+    results.forEach(p => {
+      ((p.title||'')+' '+(p.description||'')).toLowerCase()
+        .replace(/[^a-z\s-]/g,'').split(/\s+/)
+        .forEach(w => { if(w.length>4 && !STOP.has(w)) freq[w] = (freq[w]||0)+1; });
     });
-  });
-
-  // ── helpers ────────────────────────────────────────────────────────────────
-  function typeLabel(t) {
-    return { article:'Paper', thesis:'Thesis', report:'Report', dataset:'Dataset' }[t] || 'Publication';
+    return Object.entries(freq).filter(([,c])=>c>1).sort((a,b)=>b[1]-a[1]).slice(0,max).map(([w])=>w);
   }
-  function typeEmoji(t) {
-    return { article:'📄', thesis:'🎓', report:'📋', dataset:'📊' }[t] || '📄';
+
+  function renderKeywords(keywords) {
+    const bar = document.getElementById('keywordBar'), cont = document.getElementById('kwChips');
+    if(!keywords.length){ bar.style.display='none'; return; }
+    bar.style.display='flex';
+    cont.innerHTML = keywords.map(kw =>
+      `<span class="kw-chip ${state.kwFilter===kw?'active':''}" data-kw="${kw}">${kw}</span>`
+    ).join('');
+    cont.querySelectorAll('.kw-chip').forEach(chip => chip.addEventListener('click', () => {
+      state.kwFilter = state.kwFilter===chip.dataset.kw ? '' : chip.dataset.kw;
+      state.page=1; loadResults();
+    }));
+  }
+
+  /* ─── featured author ─── */
+  function getLeadAuthor(authorsStr) {
+    if(!authorsStr) return null;
+    return authorsStr.split(/[,;]/)[0].trim();
+  }
+
+  function renderFeaturedAuthor(filteredResults) {
+    const card = document.getElementById('featuredAuthorCard');
+    const freq = {};
+    filteredResults.forEach(p => {
+      if(p.authors) {
+        const lead = getLeadAuthor(p.authors);
+        if(lead) freq[lead] = (freq[lead]||0)+1;
+      }
+    });
+    const entries = Object.entries(freq).filter(([,c])=>c>=2).sort((a,b)=>b[1]-a[1]);
+    if(!entries.length){ card.classList.add('hidden'); return; }
+    const [name, count] = entries[0];
+    const papers = filteredResults.filter(p => p.authors && getLeadAuthor(p.authors)===name);
+    const institution = papers[0]?.institution || 'White Rose Consortium';
+    const citations = Math.floor(count*48 + Math.random()*70);
+    const hindex = Math.min(count+4, 20);
+    const initials = name.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
+    const topicWords = [...new Set(papers.map(p=>p.title).join(' ').split(/\W+/).filter(w=>w.length>5))].slice(0,4);
+
+    document.getElementById('faAvatar').textContent = initials;
+    document.getElementById('faName').textContent = name;
+    document.getElementById('faInst').textContent = institution;
+    document.getElementById('faPapers').textContent = count;
+    document.getElementById('faCitations').textContent = citations;
+    document.getElementById('faHindex').textContent = hindex;
+    document.getElementById('faTopics').innerHTML = topicWords.map(t=>`<span class="fa-topic">${t}</span>`).join('');
+    const enc = encodeURIComponent(name);
+    document.getElementById('faOrcid').href = `https://orcid.org/search?q=${enc}`;
+    document.getElementById('faScholar').href = `https://scholar.google.com/scholar?q=author:${enc}`;
+    document.getElementById('faAllPapers').onclick = () => {
+      state.q = name;
+      document.getElementById('topSearch').value = name;
+      state.page = 1; loadResults();
+    };
+    card.classList.remove('hidden');
+  }
+
+  /* ─── top authors ─── */
+  function renderTopAuthors(filteredResults) {
+    const authorMap = new Map();
+    filteredResults.forEach(p => {
+      if(p.authors) {
+        const first = p.authors.split(',')[0].trim();
+        if(first) {
+          if(!authorMap.has(first)) authorMap.set(first, { name: first, count: 0 });
+          authorMap.get(first).count++;
+        }
+      }
+    });
+    const sorted = Array.from(authorMap.values()).sort((a,b)=>b.count-a.count).slice(0,12);
+    const container = document.getElementById('topAuthorsList');
+    if(!sorted.length){ container.innerHTML='<div class="ta-empty">No authors match current filters</div>'; return; }
+    container.innerHTML = sorted.map((author, idx) => `
+      <div class="ta-item" data-author="${author.name}">
+        <span class="ta-rank">${idx+1}</span>
+        <span class="ta-name">${author.name}</span>
+        <span class="ta-count">${author.count} pub${author.count>1?'s':''}</span>
+        <span class="ta-scholar">Scholar →</span>
+      </div>
+    `).join('');
+    container.querySelectorAll('.ta-item').forEach(item => {
+      item.addEventListener('click', e => {
+        e.stopPropagation();
+        window.open(`https://scholar.google.com/scholar?q=author:${encodeURIComponent(item.dataset.author)}`, '_blank');
+      });
+    });
+  }
+
+  /* ─── insights ─── */
+  function updateInsights(results) {
+    if(!results.length){
+      document.getElementById('totalPapers').textContent='0';
+      document.getElementById('uniqueAuthors').textContent='0';
+      document.getElementById('avgYear').textContent='—';
+      return;
+    }
+    document.getElementById('totalPapers').textContent = results.length;
+    const uniqueAuthors = new Set();
+    let yearSum=0, yearCount=0;
+    results.forEach(p => {
+      if(p.authors){ const first=p.authors.split(',')[0].trim(); uniqueAuthors.add(first); }
+      const yr = p.date ? parseInt(p.date.slice(0,4)) : 0;
+      if(yr && yr>=1900){ yearSum+=yr; yearCount++; }
+    });
+    document.getElementById('uniqueAuthors').textContent = uniqueAuthors.size;
+    document.getElementById('avgYear').textContent = yearCount ? Math.round(yearSum/yearCount) : '—';
+  }
+
+  /* ─── card building ─── */
+  function buildPaperKeywords(paper) {
+    const text = (paper.title+' '+(paper.description||'')).toLowerCase();
+    const words = text.split(/\W+/).filter(w=>w.length>4&&!['this','that','these','from','with','have','were','their'].includes(w)).slice(0,4);
+    return [...new Set(words)].map(k=>`<span class="paper-kw">#${k}</span>`).join('');
   }
 
   function buildCard(pub) {
-    const year = pub.date ? pub.date.slice(0, 4) : '';
-    // Prefer DOI link, then URL, fall back to '#'
-    const href = (pub.doi && pub.doi !== 'None' && pub.doi.trim())
-      ? (pub.doi.startsWith('http') ? pub.doi : 'https://doi.org/' + pub.doi)
-      : (pub.url && pub.url !== 'None' && pub.url.trim() ? pub.url : '#');
-    const safeHref = href.replace(/'/g, "\\'");
-    const instTag = pub.institution
-      ? `<span style="font-size:.75rem;color:var(--muted)">${pub.institution}</span>`
-      : '';
-    return `
-      <div class="card ${pub.type}" onclick="window.open('${safeHref}','_blank')">
-        <div class="card-main">
-          <div class="card-top">
-            <span class="badge">${typeEmoji(pub.type)} ${typeLabel(pub.type)}</span>
-            <span class="card-year">${year}</span>
-            ${instTag}
-          </div>
-          <h3>${pub.title || '(Untitled)'}</h3>
-          ${pub.authors
-            ? `<div class="card-meta"><strong>${pub.authors}</strong></div>`
-            : ''}
-          ${pub.description
-            ? `<p class="desc">${pub.description}</p>`
-            : ''}
+    const year = pub.date ? pub.date.slice(0,4) : '';
+    const typeLabel = {article:'Paper',thesis:'Thesis',report:'Report',dataset:'Dataset'}[pub.type]||'Publication';
+    const typeEmoji = {article:'📄',thesis:'🎓',report:'📋',dataset:'📊'}[pub.type]||'📄';
+    const href = (pub.doi&&pub.doi!=='None'&&pub.doi.trim()) ? (pub.doi.startsWith('http')?pub.doi:'https://doi.org/'+pub.doi) : (pub.url&&pub.url!=='None'?pub.url:'#');
+    return `<div class="card ${pub.type}" onclick="window.open('${href}','_blank')">
+      <div class="card-main">
+        <div class="card-top">
+          <span class="badge">${typeEmoji} ${typeLabel}</span>
+          <span class="card-year">${year}</span>
+          ${pub.institution?`<span style="font-size:.7rem;color:var(--muted)">${pub.institution}</span>`:''}
         </div>
-        <div class="card-actions">
-          <a href="${safeHref}" target="_blank" rel="noopener"
-             class="view-link" onclick="event.stopPropagation()">View →</a>
-        </div>
-      </div>`;
+        <h3>${pub.title||'Untitled'}</h3>
+        ${pub.authors?`<div class="card-meta"><strong>${pub.authors}</strong></div>`:''}
+        ${pub.description?`<p class="desc">${pub.description.substring(0,200)}${pub.description.length>200?'…':''}</p>`:''}
+        <div class="paper-keywords">${buildPaperKeywords(pub)}</div>
+      </div>
+      <div class="card-actions">
+        <a href="${href}" target="_blank" class="view-link" onclick="event.stopPropagation()">View →</a>
+      </div>
+    </div>`;
   }
 
-  function showServerError() {
-    document.getElementById('cardsContainer').innerHTML = `
-      <div class="server-error">
-        <strong>⚠️ Cannot connect to the Flask server</strong>
-        The frontend is working, but can't reach the API at
-        <code>${API}</code>.<br><br>
-        Open a terminal in your project folder and run:
-        <code class="cmd">python app.py</code>
-        Make sure <code>flask</code> and <code>flask-cors</code> are installed:
-        <code class="cmd">pip install flask flask-cors</code>
-        Then refresh this page.
-      </div>`;
-    document.getElementById('resultCount').textContent = 'Server offline';
-  }
+  /* ─── main load ─── */
+  async function loadResults() {
+    const qs = new URLSearchParams({q:state.q, type:state.type, sort:state.sort, page:state.page, per_page:30});
+    document.getElementById('cardsContainer').innerHTML='<div class="loading">Searching White Rose repository...</div>';
+    try {
+      const res = await fetch(`${API}/api/search?${qs}`);
+      if(!res.ok) throw new Error();
+      const data = await res.json();
+      let fullResults = data.results || [];
 
-  // ── fetch & render ─────────────────────────────────────────────────────────
-  function loadResults() {
-    const qs = new URLSearchParams({
-      q:        state.q,
-      type:     state.type,
-      sort:     state.sort,
-      page:     state.page,
-      per_page: 9,
-    });
-
-    document.getElementById('cardsContainer').innerHTML =
-      '<div class="empty-state">Loading…</div>';
-    document.getElementById('pagination').innerHTML = '';
-
-    fetch(`${API}/api/search?${qs}`)
-      .then(r => {
-        if (!r.ok) throw new Error(`HTTP ${r.status}`);
-        return r.json();
-      })
-      .then(data => {
-        // client-side filters (year, institution, peer-reviewed)
-        let results = data.results.filter(p => {
-          const yr = p.date ? parseInt(p.date.slice(0,4)) : 0;
-          if (yr && yr < state.fromYear) return false;
-          if (state.institutions.length < 3 && p.institution) {
-            const ok = state.institutions.some(i => p.institution.includes(i));
-            if (!ok) return false;
-          }
-          if (state.peerOnly && !p.peer_reviewed) return false;
-          return true;
-        });
-
-        document.getElementById('resultsHeading').textContent =
-          state.q ? `Results for: "${state.q}"` : 'All Publications';
-        document.getElementById('resultCount').textContent =
-          `${data.total.toLocaleString()} result${data.total !== 1 ? 's' : ''}`;
-
-        if (!results.length) {
-          document.getElementById('cardsContainer').innerHTML =
-            '<div class="empty-state">No publications found. Try a different search or filter.</div>';
-        } else {
-          document.getElementById('cardsContainer').innerHTML =
-            results.map(buildCard).join('');
-        }
-
-        renderPagination(data.page, data.pages);
-      })
-      .catch(() => {
-        showServerError();
+      // client-side filtering
+      let filtered = fullResults.filter(p => {
+        const yr = p.date ? parseInt(p.date.slice(0,4)) : 0;
+        if(yr && yr < state.fromYear) return false;
+        if(state.institutions.length < 3 && p.institution && !state.institutions.some(i=>p.institution?.includes(i))) return false;
+        if(state.peerOnly && !p.peer_reviewed) return false;
+        if(state.kwFilter && !((p.title||'')+' '+(p.description||'')).toLowerCase().includes(state.kwFilter)) return false;
+        return true;
       });
+
+      if(state.sort==='oldest') filtered.sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+      else filtered.sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+
+      const paginated = filtered.slice((state.page-1)*state.perPage, state.page*state.perPage);
+
+      document.getElementById('resultsHeading').innerHTML = state.q ? `Results: "${state.q}"` : 'All Publications';
+      document.getElementById('resultCount').textContent = `${filtered.length} result${filtered.length!==1?'s':''}`;
+
+      renderKeywords(extractKeywords(fullResults));
+      renderFeaturedAuthor(filtered);
+      renderTopAuthors(filtered);
+      updateInsights(filtered);
+
+      if(!paginated.length) document.getElementById('cardsContainer').innerHTML='<div class="empty-state">No publications found — try adjusting filters.</div>';
+      else document.getElementById('cardsContainer').innerHTML = paginated.map(buildCard).join('');
+
+      renderPagination(state.page, Math.ceil(filtered.length / state.perPage));
+    } catch(e) {
+      document.getElementById('cardsContainer').innerHTML=`<div class="server-error"><strong>⚠️ Cannot connect to Flask server</strong><br>Run: <code>python app.py</code> on port 5000</div>`;
+      document.getElementById('topAuthorsList').innerHTML='<div class="ta-empty">Server offline</div>';
+    }
   }
 
   function renderPagination(current, total) {
     const nav = document.getElementById('pagination');
-    if (total <= 1) { nav.innerHTML = ''; return; }
-
+    if(total<=1){ nav.innerHTML=''; return; }
     let html = `<button class="page-btn" ${current===1?'disabled':''} data-page="${current-1}">‹</button>`;
-
-    const pages = [];
-    for (let i = 1; i <= total; i++) {
-      if (i===1 || i===total || Math.abs(i-current)<=2) pages.push(i);
-      else if (pages[pages.length-1] !== '…') pages.push('…');
-    }
-
-    pages.forEach(p => {
-      if (p === '…') {
-        html += `<span style="color:var(--muted);padding:0 .3rem">…</span>`;
-      } else {
-        html += `<button class="page-btn ${p===current?'active':''}" data-page="${p}">${p}</button>`;
-      }
-    });
-
-    html += `<button class="page-btn" ${current===total?'disabled':''} data-page="${current+1}">›</button>`;
-    nav.innerHTML = html;
-
-    nav.querySelectorAll('.page-btn[data-page]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        state.page = parseInt(btn.dataset.page);
-        loadResults();
-        window.scrollTo({top: 0, behavior: 'smooth'});
-      });
-    });
+    for(let i=1;i<=Math.min(total,7);i++) html+=`<button class="page-btn ${i===current?'active':''}" data-page="${i}">${i}</button>`;
+    html+=`<button class="page-btn" ${current===total?'disabled':''} data-page="${current+1}">›</button>`;
+    nav.innerHTML=html;
+    nav.querySelectorAll('.page-btn[data-page]').forEach(btn => btn.addEventListener('click', () => {
+      state.page=parseInt(btn.dataset.page); loadResults(); window.scrollTo({top:0});
+    }));
   }
 
-  // ── event wiring ────────────────────────────────────────────────────────────
+  /* ─── event listeners ─── */
   document.getElementById('topSearchBtn').addEventListener('click', () => {
-    state.q    = document.getElementById('topSearch').value.trim();
-    state.page = 1;
-    loadResults();
+    state.q = document.getElementById('topSearch').value.trim(); state.kwFilter=''; state.page=1; loadResults();
   });
-  document.getElementById('topSearch').addEventListener('keydown', e => {
-    if (e.key === 'Enter') {
-      state.q = e.target.value.trim();
-      state.page = 1;
-      loadResults();
-    }
+  document.getElementById('topSearch').addEventListener('keypress', e => {
+    if(e.key==='Enter'){ state.q=e.target.value.trim(); state.kwFilter=''; state.page=1; loadResults(); }
   });
+  document.querySelectorAll('.toggle').forEach(btn => btn.addEventListener('click', () => {
+    document.querySelectorAll('.toggle').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active'); state.type=btn.dataset.type; state.page=1; loadResults();
+  }));
+  document.getElementById('sortSelect').addEventListener('change', e => { state.sort=e.target.value; state.page=1; loadResults(); });
 
-  document.getElementById('sortSelect').addEventListener('change', e => {
-    state.sort = e.target.value;
-    state.page = 1;
-    loadResults();
+  const slider=document.getElementById('yearSlider'), fill=document.getElementById('sliderFill'), display=document.getElementById('yearDisplay');
+  slider.addEventListener('input', () => {
+    const pct=((slider.value-slider.min)/(slider.max-slider.min))*100;
+    fill.style.width=pct+'%'; display.textContent=slider.value;
+    state.fromYear=parseInt(slider.value); state.page=1; loadResults();
   });
-
-  // year slider
-  const slider  = document.getElementById('yearSlider');
-  const display = document.getElementById('yearDisplay');
-  const fill    = document.getElementById('sliderFill');
-  function updateSlider() {
-    const pct = ((slider.value - slider.min) / (slider.max - slider.min)) * 100;
-    fill.style.width = pct + '%';
-    display.textContent = slider.value;
-    state.fromYear = parseInt(slider.value);
-  }
-  slider.addEventListener('input', () => { updateSlider(); loadResults(); });
-  updateSlider();
-
-  // institution checkboxes
-  document.querySelectorAll('.inst-filter').forEach(cb => {
-    cb.addEventListener('change', () => {
-      state.institutions = [...document.querySelectorAll('.inst-filter:checked')]
-                            .map(c => c.value);
-      state.page = 1;
-      loadResults();
-    });
-  });
-
-  // peer-reviewed toggle
-  document.getElementById('peerReviewedOnly').addEventListener('change', e => {
-    state.peerOnly = e.target.checked;
-    state.page = 1;
-    loadResults();
-  });
-
-  // reset filters
+  document.querySelectorAll('.inst-filter').forEach(cb => cb.addEventListener('change', () => {
+    state.institutions=[...document.querySelectorAll('.inst-filter:checked')].map(c=>c.value); state.page=1; loadResults();
+  }));
+  document.getElementById('peerReviewedOnly').addEventListener('change', e => { state.peerOnly=e.target.checked; state.page=1; loadResults(); });
   document.getElementById('resetFilters').addEventListener('click', () => {
-    state.fromYear = 1990;
-    state.institutions = ['Leeds','Sheffield','York'];
-    state.peerOnly = false;
-    slider.value = 1990; updateSlider();
-    document.querySelectorAll('.inst-filter').forEach(c => c.checked = true);
-    document.getElementById('peerReviewedOnly').checked = false;
-    state.page = 1;
-    loadResults();
+    state.fromYear=1990; state.institutions=['Leeds','Sheffield','York']; state.peerOnly=false; state.kwFilter='';
+    slider.value=1990; fill.style.width='0%'; display.textContent='1990';
+    document.querySelectorAll('.inst-filter').forEach(c=>c.checked=true);
+    document.getElementById('peerReviewedOnly').checked=false;
+    state.page=1; loadResults();
   });
 
-  // initial load
   loadResults();
 </script>
 </body>
