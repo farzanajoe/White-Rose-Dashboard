@@ -89,13 +89,12 @@ def clean_html(text):
 # ── load CSV ──────────────────────────────────────────────────────────────────
 
 def load_data():
-    global PUBLICATIONS
+    global PUBLICATIONS, DATA_PATH  # ← This must be the first line of the function
+    
     if not os.path.exists(DATA_PATH):
-        print(f"WARNING: CSV not found at {os.path.abspath(DATA_PATH)}")
         # Try alternative path for Render deployment
         alt_path = Path(__file__).parent / "data" / "combined_papers_theses.csv"
         if alt_path.exists():
-            global DATA_PATH
             DATA_PATH = str(alt_path)
             print(f"Found data at: {DATA_PATH}")
         else:
@@ -147,50 +146,6 @@ def load_data():
 
     PUBLICATIONS.sort(key=lambda p: p["date"], reverse=True)
     print(f"Loaded {len(PUBLICATIONS)} publications. (skipped {skipped} blank-title rows)")
-
-def create_sample_data():
-    """Create sample data if CSV is missing"""
-    global PUBLICATIONS
-    sample_papers = [
-        {
-            "id": "1",
-            "title": "Advances in Machine Learning for Healthcare",
-            "authors": "Smith, J., Johnson, M.",
-            "description": "This paper explores novel machine learning approaches for medical diagnosis...",
-            "date": "2024-03-15",
-            "type": "article",
-            "institution": "University of Leeds",
-            "url": "#",
-            "doi": "10.1234/example.1",
-            "peer_reviewed": True,
-        },
-        {
-            "id": "2",
-            "title": "Sustainable Energy Solutions for Urban Environments",
-            "authors": "Williams, E., Brown, T.",
-            "description": "Research on renewable energy integration in city planning...",
-            "date": "2023-11-20",
-            "type": "article",
-            "institution": "University of Sheffield",
-            "url": "#",
-            "doi": "10.1234/example.2",
-            "peer_reviewed": True,
-        },
-        {
-            "id": "3",
-            "title": "AI Ethics Framework for Autonomous Systems",
-            "authors": "Davis, A.",
-            "description": "A comprehensive framework for ethical AI development and deployment...",
-            "date": "2024-01-10",
-            "type": "thesis",
-            "institution": "University of York",
-            "url": "#",
-            "doi": "",
-            "peer_reviewed": False,
-        },
-    ]
-    PUBLICATIONS = sample_papers
-    print(f"Loaded {len(PUBLICATIONS)} sample publications")
 
 # ── search helper ─────────────────────────────────────────────────────────────
 
