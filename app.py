@@ -1,175 +1,253 @@
-from flask import Flask, request, jsonify, render_template
-import pandas as pd
-import joblib
-import numpy as np
-import os
+"""
+White Rose Publication – Flask Backend
+Reads combined_papers_theses.csv and exposes a REST search API.
+
+Run:  python app.py
+Endpoints:
+  GET /api/search?q=&type=all|article|thesis|report|dataset&page=1&per_page=9
+  GET /api/stats
+  GET /api/recent?limit=12
+  GET /api/health
+"""
+
+from flask import Flask, jsonify, request
+from flask_cors import CORS
+import csv, ast, re, os, math, sys
+from datetime import datetime
+
+# Raise CSV field size limit — some abstract fields exceed the 128KB default
+csv.field_size_limit(min(sys.maxsize, 2147483647))
 
 app = Flask(__name__)
+CORS(app, resources={r"/api/*": {"origins": "*"}})
 
-# ── Auto-train model if it doesn't exist ────────────────────
-if not os.path.exists("churn_model.pkl"):
-    print("churn_model.pkl not found — training now...")
+# ── data path ─────────────────────────────────────────────────────────────────
+DATA_PATH = os.path.join(os.path.dirname(__file__), "data", "combined_papers_theses.csv")
+PUBLICATIONS = []
 
-    from sklearn.preprocessing import OneHotEncoder
-    from sklearn.model_selection import train_test_split
-    from sklearn.ensemble import RandomForestClassifier
-    from sklearn.compose import ColumnTransformer
-    from sklearn.pipeline import Pipeline
+# ── helpers ───────────────────────────────────────────────────────────────────
 
-    df = pd.read_csv("data/urbanfit_customer_churn_dataset.csv")
+def parse_sets(raw):
+    """
+    The 'sets' column is a stringified dict, e.g.:
+      {'status': 'pub', 'institution': 'Sheffield', 'unit': '...'}
+    Extract 'institution' directly. Falls back to scanning the raw string.
+    """
+    try:
+        d = ast.literal_eval(raw)
+        inst = d.get("institution", "").strip()
+        if inst:
+            return inst
+    except Exception:
+        pass
+    for uni in ("Leeds", "Sheffield", "York"):
+        if uni.lower() in raw.lower():
+            return uni
+    return ""
 
-    features = [
-        "age", "gender", "location", "tenure_months", "monthly_spend_gbp",
-        "avg_weekly_sessions", "days_since_last_login", "app_engagement_type",
-        "support_tickets_last_6m", "plan_type", "discount_received", "referral_source"
-    ]
-    target = "churned"
+def parse_date(raw):
+    """Return ISO date string YYYY-MM-DD, or empty string."""
+    if not raw:
+        return ""
+    raw = str(raw).strip()
+    for fmt in ("%Y-%m-%d", "%d/%m/%Y", "%m/%d/%Y", "%Y"):
+        try:
+            return datetime.strptime(raw, fmt).strftime("%Y-%m-%d")
+        except ValueError:
+            pass
+    m = re.search(r"\b(1\d{3}|20\d{2})\b", raw)
+    return f"{m.group(1)}-01-01" if m else ""
 
-    X = df[features]
-    y = df[target]
+def fmt_date(iso):
+    """Format ISO date as '7 Jun 2002', Windows-safe (no %-d)."""
+    if not iso:
+        return ""
+    try:
+        dt = datetime.strptime(iso, "%Y-%m-%d")
+        return f"{dt.day} {dt.strftime('%b')} {dt.year}"
+    except ValueError:
+        return iso
 
-    categorical = ["gender", "location", "app_engagement_type", "plan_type", "referral_source"]
-    numerical   = ["age", "tenure_months", "monthly_spend_gbp", "avg_weekly_sessions",
-                   "days_since_last_login", "support_tickets_last_6m", "discount_received"]
+def parse_authors(raw):
+    """Return a readable author string from a list-of-dicts or plain string."""
+    try:
+        authors = ast.literal_eval(raw)
+        names = [a.get("name", "") for a in authors if isinstance(a, dict) and a.get("name")]
+        if not names:
+            return ""
+        if len(names) == 1:
+            return names[0]
+        if len(names) <= 3:
+            return ", ".join(names)
+        return f"{names[0]} et al."
+    except Exception:
+        return str(raw)[:80] if raw else ""
 
-    preprocessor = ColumnTransformer(transformers=[
-        ("cat", OneHotEncoder(handle_unknown="ignore"), categorical),
-        ("num", "passthrough", numerical)
-    ])
+def clean_html(text):
+    """Strip HTML tags."""
+    return re.sub(r"<[^>]+>", " ", str(text or "")).strip()
 
-    pipeline = Pipeline([
-        ("preprocessing", preprocessor),
-        ("classifier", RandomForestClassifier(n_estimators=200, random_state=42))
-    ])
+# ── load CSV ──────────────────────────────────────────────────────────────────
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-    pipeline.fit(X_train, y_train)
+def load_data():
+    global PUBLICATIONS
+    if not os.path.exists(DATA_PATH):
+        print(f"WARNING: CSV not found at {os.path.abspath(DATA_PATH)}")
+        return
 
-    accuracy = pipeline.score(X_test, y_test)
-    print(f"Model Accuracy: {accuracy:.2f}")
+    with open(DATA_PATH, newline="", encoding="utf-8") as f:
+        reader = csv.DictReader(f, delimiter=",")
+        skipped = 0
+        for row in reader:
 
-    joblib.dump(pipeline, "churn_model.pkl")
-    print("churn_model.pkl saved successfully!")
+            # skip blank-title rows
+            title = str(row.get("title", "")).strip()
+            if not title:
+                skipped += 1
+                continue
 
-model = joblib.load("churn_model.pkl")
+            # doc type — CSV has "Article", "Thesis", etc. (capitalised)
+            raw_type = str(row.get("doctype", row.get("type", ""))).lower().strip()
+            if "thesis" in raw_type or "thes" in raw_type:
+                doc_type = "thesis"
+            elif "report" in raw_type:
+                doc_type = "report"
+            elif "dataset" in raw_type or "data" in raw_type:
+                doc_type = "dataset"
+            else:
+                doc_type = "article"
 
-# ── Routes ───────────────────────────────────────────────────
-@app.route("/")
-def home():
-    return render_template("index.html")
+            # institution — parsed from the sets dict string
+            inst_short = parse_sets(str(row.get("sets", "")))
+            institution = f"University of {inst_short}" if inst_short else ""
 
-@app.route("/result")
-def result():
-    return render_template("result.html")
+            iso_date = parse_date(row.get("date", ""))
 
-@app.route("/predict", methods=["POST"])
-def predict():
-    data = request.json
+            description = clean_html(row.get("description", ""))
+            if len(description) > 300:
+                description = description[:297] + "…"
 
-    age                     = int(data["age"])
-    gender                  = data["gender"]
-    location                = data["location"].title()
-    tenure_months           = int(data["tenure_months"])
-    monthly_spend_gbp       = float(data["monthly_spend_gbp"])
-    avg_weekly_sessions     = float(data["avg_weekly_sessions"])
-    days_since_last_login   = int(data["days_since_last_login"])
-    app_engagement_type     = data["app_engagement_type"]
-    support_tickets_last_6m = int(data["support_tickets_last_6m"])
-    plan_type               = data["plan_type"]
-    discount_received       = int(data["discount_received"])
-    referral_source         = data["referral_source"]
+            PUBLICATIONS.append({
+                "id":           row.get("id", ""),
+                "title":        title,
+                "authors":      parse_authors(row.get("authors", "")),
+                "description":  description,
+                "date":         iso_date,
+                "date_raw":     row.get("date", ""),
+                "type":         doc_type,
+                "institution":  institution,
+                "url":          str(row.get("url", "")),
+                "doi":          str(row.get("doi", "")),
+                "peer_reviewed": str(row.get("peerreviewed", "")).upper() == "TRUE",
+            })
 
-    new_customer = pd.DataFrame([{
-        "age": age,
-        "gender": gender,
-        "location": location,
-        "tenure_months": tenure_months,
-        "monthly_spend_gbp": monthly_spend_gbp,
-        "avg_weekly_sessions": avg_weekly_sessions,
-        "days_since_last_login": days_since_last_login,
-        "app_engagement_type": app_engagement_type,
-        "support_tickets_last_6m": support_tickets_last_6m,
-        "plan_type": plan_type,
-        "discount_received": discount_received,
-        "referral_source": referral_source
-    }])
+    PUBLICATIONS.sort(key=lambda p: p["date"], reverse=True)
+    print(f"Loaded {len(PUBLICATIONS)} publications. (skipped {skipped} blank-title rows)")
 
-    prob = model.predict_proba(new_customer)[0, 1]
+load_data()
 
-    if prob > 0.7:
-        risk = "HIGH"
-    elif prob > 0.4:
-        risk = "MEDIUM"
-    else:
-        risk = "LOW"
+# ── search helper ─────────────────────────────────────────────────────────────
 
-    X_transformed = model.named_steps["preprocessing"].transform(new_customer)
-    if hasattr(X_transformed, "toarray"):
-        X_array = X_transformed.toarray()[0]
-    else:
-        X_array = np.array(X_transformed)[0]
+def matches(pub, q, doc_type):
+    if doc_type and doc_type != "all" and pub["type"] != doc_type:
+        return False
+    if q:
+        haystack = " ".join([
+            pub["title"], pub["authors"],
+            pub["description"], pub["institution"]
+        ]).lower()
+        for token in q.lower().split():
+            if token not in haystack:
+                return False
+    return True
 
-    feature_names = model.named_steps["preprocessing"].get_feature_names_out()
-    importances   = model.named_steps["classifier"].feature_importances_
-    contributions = X_array * importances
+# ── CORS on every response ────────────────────────────────────────────────────
 
-    explain_df = pd.DataFrame({"Feature": feature_names, "Contribution": contributions})
-    top3 = explain_df.reindex(
-        explain_df["Contribution"].abs().sort_values(ascending=False).index
-    ).head(3)
-    drivers = [f.replace("num__", "").replace("cat__", "") for f in top3["Feature"].tolist()]
+@app.after_request
+def add_cors_headers(response):
+    response.headers["Access-Control-Allow-Origin"]  = "*"
+    response.headers["Access-Control-Allow-Methods"] = "GET, OPTIONS"
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type"
+    return response
 
-    short_term = []
-    long_term  = []
+# ── routes ────────────────────────────────────────────────────────────────────
 
-    if age <= 25:
-        short_term.append("Recommend short, high-energy workouts suitable for younger users.")
-        long_term.append("Introduce gamified fitness challenges and social competitions.")
-    if gender == "Female":
-        short_term.append("Promote popular group workouts such as yoga or pilates.")
-        long_term.append("Expand community-based group fitness programs.")
-    if location in ["London", "Leeds", "Bristol", "Newcastle"]:
-        short_term.append("Send city-based fitness campaigns or challenges.")
-        long_term.append("Develop local fitness communities and events.")
-    if tenure_months <= 3:
-        short_term.append("Send onboarding reminders and workout guidance for new members.")
-        long_term.append("Improve the onboarding journey to help users build habits early.")
-    if monthly_spend_gbp > 70:
-        short_term.append("Offer loyalty rewards for high-paying members.")
-        long_term.append("Provide premium-exclusive features or classes.")
-    if discount_received == 0:
-        short_term.append("Provide a temporary retention discount or promotional offer.")
-        long_term.append("Introduce a loyalty-based discount program.")
-    if avg_weekly_sessions <= 2:
-        short_term.append("Send reminders encouraging at least 3 workouts per week.")
-        long_term.append("Introduce streak rewards or achievement badges.")
-    if days_since_last_login >= 30:
-        short_term.append("Send re-engagement notifications encouraging the user to return.")
-        short_term.append("Email personalised workout suggestions.")
-        long_term.append("Implement AI-based personalised workout recommendations.")
-    if app_engagement_type == "On-Demand":
-        short_term.append("Encourage participation in Live Classes.")
-        long_term.append("Allow on-demand users to schedule upcoming sessions.")
-    if support_tickets_last_6m >= 3:
-        short_term.append("Prioritise faster customer support response.")
-        long_term.append("Improve the customer support system to reduce response time.")
-    if plan_type == "Basic":
-        short_term.append("Promote additional features available in higher plans.")
-        long_term.append("Introduce extra value benefits for Basic plan users.")
-    if referral_source == "Paid Ad":
-        short_term.append("Send targeted engagement emails for newly acquired users.")
-        long_term.append("Improve marketing targeting to attract higher-retention customers.")
+@app.route("/api/health")
+def health():
+    return jsonify({"status": "ok", "publications": len(PUBLICATIONS)})
 
-    short_term = list(set(short_term))[:5]
-    long_term  = list(set(long_term))[:5]
 
+@app.route("/api/stats")
+def stats():
     return jsonify({
-        "probability": round(float(prob), 3),
-        "risk": risk,
-        "drivers": drivers,
-        "short_term": short_term,
-        "long_term": long_term
+        "total":          len(PUBLICATIONS),
+        "universities":   3,
+        "papers_per_day": "~40",
+        "theses_per_day": "~2-3",
     })
 
+
+@app.route("/api/recent")
+def recent():
+    limit = min(int(request.args.get("limit", 12)), 50)
+    results = [{**p, "date_display": fmt_date(p["date"])} for p in PUBLICATIONS[:limit]]
+    return jsonify(results)
+
+
+@app.route("/api/search")
+def search():
+    q           = request.args.get("q", "").strip()
+    doc_type    = request.args.get("type", "all").strip().lower()
+    page        = max(1, int(request.args.get("page", 1)))
+    per_page    = max(1, min(50, int(request.args.get("per_page", 9))))
+    sort        = request.args.get("sort", "recent")
+    inst_filter = request.args.get("institutions", "").strip()
+    inst_list   = [i.strip() for i in inst_filter.split(",") if i.strip()] if inst_filter else []
+    from_year   = int(request.args.get("from_year", 0))
+    peer_only   = request.args.get("peer_only", "false").lower() == "true"
+
+    filtered = []
+    for p in PUBLICATIONS:
+        if not matches(p, q, doc_type):
+            continue
+        if from_year and p["date"]:
+            try:
+                if int(p["date"][:4]) < from_year:
+                    continue
+            except ValueError:
+                pass
+        if inst_list:
+            if not any(i.lower() in p["institution"].lower() for i in inst_list):
+                continue
+        if peer_only and not p["peer_reviewed"]:
+            continue
+        filtered.append(p)
+
+    if sort == "oldest":
+        filtered = sorted(filtered, key=lambda p: p["date"])
+
+    total    = len(filtered)
+    pages    = math.ceil(total / per_page) if total else 1
+    page     = min(page, pages)
+    start    = (page - 1) * per_page
+    chunk    = filtered[start:start + per_page]
+    items    = [{**p, "date_display": fmt_date(p["date"])} for p in chunk]
+
+    return jsonify({
+        "query":    q,
+        "type":     doc_type,
+        "total":    total,
+        "page":     page,
+        "pages":    pages,
+        "per_page": per_page,
+        "results":  items,
+    })
+
+
 if __name__ == "__main__":
-    app.run(debug=True)
+    print("\n" + "=" * 50)
+    print("  White Rose Publication API")
+    print("  Running at http://localhost:5000")
+    print("  Health:     http://localhost:5000/api/health")
+    print("=" * 50 + "\n")
+    app.run(debug=True, port=5000, host="0.0.0.0")

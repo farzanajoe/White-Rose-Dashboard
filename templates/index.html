@@ -9,23 +9,17 @@
 <body>
 
   <!-- Top Navigation -->
-<header class="top-bar">
-  <div class="left">
-    <img src="../assets/whitehomesymbol.png" width="25">
-    </a>
-  </div>
-
-  <div class="center">
-    <img src="../assets/whiteroselogo.png" width="30">
-    <h1><span class="brand-name">White Rose Publication</h1>
-  </div>
-
-  <div class="right">
-    <a href="#">Login</a>
-    <span class="divider">|</span>
-    <a href="#">Create Account</a>
-  </div>
-</header>
+  <header class="top-bar">
+    <div class="left">
+      <img src="../assets/whiteroselogo.png" width="30">
+      <h1><span class="brand-name">White Rose Publication</span></h1>
+    </div>
+    <div class="right">
+      <a href="#">Login</a>
+      <span class="divider">|</span>
+      <a href="#">Create Account</a>
+    </div>
+  </header>
 
   <!-- University Logos -->
   <section class="logos">
@@ -36,53 +30,47 @@
     <img src="../assets/universityofyork.png" width="200">
   </section>
 
-    <!-- ADD THIS NEW SECTION - Navigation Dropdowns -->
+  <!-- Navigation Dropdowns -->
   <nav class="main-nav">
     <div class="dropdown-container">
-      <!-- Discover Dropdown -->
-<div class="dropdown">
-  <button class="dropbtn">Discover <span class="arrow">▼</span></button>
-  <div class="dropdown-content">
-    <a href="#">Research Statistics</a>
-    <a href="#">Restricted Items & Requesting</a>
-  </div>
-</div>
-      
-      <!-- Research Online Dropdown -->
-    <div class="dropdown">
-      <button class="dropbtn">Research Online <span class="arrow">▼</span></button>
-      <div class="dropdown-content">
-        <a href="#">About</a>
-        <a href="#">FAQs</a>
-        <a href="#">Copyright, Licence and Reuse Information</a>
-        <a href="#">Privacy and data protection</a>
-        <a href="#">Takedown policy</a>
-        <a href="#">Information for depositors</a>
-        <a href="#">Contact</a>
-        <a href="#">Accessibility</a>
+      <div class="dropdown">
+        <button class="dropbtn">Discover <span class="arrow">▼</span></button>
+        <div class="dropdown-content">
+          <a href="#">Research Statistics</a>
+          <a href="#">Restricted Items &amp; Requesting</a>
+        </div>
+      </div>
+
+      <div class="dropdown">
+        <button class="dropbtn">Research Online <span class="arrow">▼</span></button>
+        <div class="dropdown-content">
+          <a href="#">About</a>
+          <a href="#">FAQs</a>
+          <a href="#">Copyright, Licence and Reuse Information</a>
+          <a href="#">Privacy and data protection</a>
+          <a href="#">Takedown policy</a>
+          <a href="#">Information for depositors</a>
+          <a href="#">Contact</a>
+          <a href="#">Accessibility</a>
+        </div>
+      </div>
+
+      <div class="dropdown">
+        <button class="dropbtn">E-Thesis Online <span class="arrow">▼</span></button>
+        <div class="dropdown-content">
+          <a href="#">About</a>
+          <a href="#">Deposit</a>
+          <a href="#">FAQs</a>
+          <a href="#">Copyright and Reuse Information</a>
+          <a href="#">Privacy and data protection</a>
+          <a href="#">Takedown policy</a>
+          <a href="#">Other sources of theses</a>
+          <a href="#">Contact</a>
+          <a href="#">Accessibility</a>
+        </div>
       </div>
     </div>
-      
-      <!-- E-Thesis Online Dropdown -->
- <div class="dropdown">
-      <button class="dropbtn">E-Thesis Online <span class="arrow">▼</span></button>
-      <div class="dropdown-content">
-        <a href="#">About</a>
-        <a href="#">Deposit</a>
-        <a href="#">FAQs</a>
-        <a href="#">Copyright and Reuse Information</a>
-        <a href="#">Privacy and data protection</a>
-        <a href="#">Takedown policy</a>
-        <a href="#">Other sources of theses</a>
-        <a href="#">Contact</a>
-        <a href="#">Accessibility</a>
-      </div>
-    </div>
-  </div>
-</nav>
-  <!-- END OF DROPDOWN NAVIGATION -->
-
-
+  </nav>
 
   <!-- Hero Section -->
   <section class="hero">
@@ -91,55 +79,48 @@
     <p class="hero-sub">Discover thousands of peer-reviewed papers, theses and research outputs from the Universities of Leeds, Sheffield and York.</p>
 
     <div class="search-bar">
-      <input type="text" placeholder="Search papers, theses, authors..." />
-      <button>&#128269; Search</button>
+      <input type="text" id="heroSearch" placeholder="Search papers, theses, authors..." />
+      <button id="heroSearchBtn">&#128269; Search</button>
     </div>
 
     <div class="search-filters">
-      <div class="filter-chip active">All</div>
-      <div class="filter-chip">Papers</div>
-      <div class="filter-chip">Theses</div>
+      <div class="filter-chip active" data-filter="all">All</div>
+      <div class="filter-chip" data-filter="article">Papers</div>
+      <div class="filter-chip" data-filter="thesis">Theses</div>
     </div>
   </section>
 
-  <!-- Stats Bar -->
+  <!-- Stats Bar (populated by API) -->
   <div class="stats-bar">
     <div class="stat">
-      <div class="num">125,000+</div>
+      <div class="num" id="stat-total">—</div>
       <div class="lbl">Publications</div>
     </div>
     <div class="stat">
-      <div class="num">3</div>
+      <div class="num" id="stat-unis">3</div>
       <div class="lbl">Universities</div>
     </div>
     <div class="stat">
-      <div class="num">~40</div>
+      <div class="num" id="stat-papers">~40</div>
       <div class="lbl">Papers/Working Day</div>
     </div>
     <div class="stat">
-      <div class="num">~2-3</div>
-      <div class="lbl">Papers/Working Day</div>
+      <div class="num" id="stat-theses">~2-3</div>
+      <div class="lbl">Theses/Working Day</div>
     </div>
   </div>
 
- <!-- =============================================
-       RECENT PUBLICATIONS
-       Data comes from your backend — replace the
-       placeholder cards below with a server-side
-       loop (Jinja2, PHP, etc.) or a fetch() call.
-  ============================================= -->
+  <!-- Recent Publications -->
   <section class="publications-section" aria-label="Recent Publications">
 
-    <!-- Header -->
     <div class="pub-section-header">
       <div class="pub-section-left">
         <p class="pub-eyebrow">Open Access Repository</p>
         <h2>Recent Publications</h2>
       </div>
-      <a href="#" class="pub-view-all">View all publications →</a>
+      <a href="result.html" class="pub-view-all">View all publications →</a>
     </div>
 
-    <!-- Filter pills -->
     <div class="pub-filter-bar" role="group" aria-label="Filter by type">
       <button class="pub-filter-btn active" data-filter="all">All</button>
       <button class="pub-filter-btn" data-filter="article">Journal Articles</button>
@@ -148,155 +129,171 @@
       <button class="pub-filter-btn" data-filter="dataset">Datasets</button>
     </div>
 
-    <!-- Cards grid
-         BACKEND NOTE: render one .pub-card per row from your DB query.
-         Required data attributes on <article>:
-           data-type  → "article" | "thesis" | "report" | "dataset"
-           data-uni   → "leeds"   | "sheffield" | "york"
-    -->
+    <!-- Cards grid – populated by JS -->
     <div class="pub-grid" id="pubGrid">
+      <div class="pub-loading">Loading publications…</div>
+    </div>
 
-      <!-- Card 1 -->
-      <article class="pub-card" data-type="article" data-uni="leeds" tabindex="0">
-        <div class="pub-card-top">
-          <span class="pub-type-badge article">Journal Article</span>
-          <span class="pub-uni-tag leeds">University of Leeds</span>
-        </div>
-        <h3 class="pub-card-title">Deep Learning Approaches for Early Detection of Alzheimer's Disease Using MRI Biomarkers</h3>
-        <p class="pub-card-authors">
-          <span class="lead-author">Dr. Sarah Mitchell</span>, Prof. James Hartley, Dr. Priya Nair
-        </p>
-        <p class="pub-card-excerpt">
-          A convolutional neural network pipeline trained on 4,200 structural MRI scans identifies early-stage amyloid plaque formations with 91% sensitivity prior to clinical symptom onset.
-        </p>
-        <div class="pub-card-footer">
-          <span class="pub-card-date">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-            15 Mar 2026
-          </span>
-          <a href="#" class="pub-card-link">Read more →</a>
-        </div>
-      </article>
-
-      <!-- Card 2 -->
-      <article class="pub-card" data-type="article" data-uni="sheffield" tabindex="0">
-        <div class="pub-card-top">
-          <span class="pub-type-badge article">Journal Article</span>
-          <span class="pub-uni-tag sheffield">University of Sheffield</span>
-        </div>
-        <h3 class="pub-card-title">Carbon Capture Efficiency in Post-Industrial Urban Green Corridors</h3>
-        <p class="pub-card-authors">
-          <span class="lead-author">Dr. Amara Osei</span>, Prof. Lena Brauer
-        </p>
-        <p class="pub-card-excerpt">
-          Field measurements across 14 urban sites in Northern England reveal strategically planted green corridors can sequester up to 3.4 tonnes of CO₂ per hectare annually.
-        </p>
-        <div class="pub-card-footer">
-          <span class="pub-card-date">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-            10 Mar 2026
-          </span>
-          <a href="#" class="pub-card-link">Read more →</a>
-        </div>
-      </article>
-
-      <!-- Card 3 -->
-      <article class="pub-card" data-type="thesis" data-uni="york" tabindex="0">
-        <div class="pub-card-top">
-          <span class="pub-type-badge thesis">Thesis</span>
-          <span class="pub-uni-tag york">University of York</span>
-        </div>
-        <h3 class="pub-card-title">Identity, Migration, and the Politics of Belonging in Post-Brexit Northern England</h3>
-        <p class="pub-card-authors">
-          <span class="lead-author">Fatima Al-Rashid</span>
-        </p>
-        <p class="pub-card-excerpt">
-          A mixed-methods ethnographic study examining how EU migrants in Leeds, Sheffield, and York negotiate civic identity, drawing on 80 in-depth interviews conducted 2021–2024.
-        </p>
-        <div class="pub-card-footer">
-          <span class="pub-card-date">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-            4 Mar 2026
-          </span>
-          <a href="#" class="pub-card-link">Read more →</a>
-        </div>
-      </article>
-
-      <!-- Card 4 -->
-      <article class="pub-card" data-type="report" data-uni="leeds" tabindex="0">
-        <div class="pub-card-top">
-          <span class="pub-type-badge report">Report</span>
-          <span class="pub-uni-tag leeds">University of Leeds</span>
-        </div>
-        <h3 class="pub-card-title">Yorkshire Regional Transport Decarbonisation: 2025 Progress Report</h3>
-        <p class="pub-card-authors">
-          <span class="lead-author">Prof. Daniel Okafor</span>, Dr. Rhiannon Price, Dr. Kofi Mensah
-        </p>
-        <p class="pub-card-excerpt">
-          Annual benchmarking of transport emissions across Yorkshire against 2030 Net Zero targets, evaluating the impact of the Leeds Electric Bus Fleet rollout on urban air quality.
-        </p>
-        <div class="pub-card-footer">
-          <span class="pub-card-date">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-            28 Feb 2026
-          </span>
-          <a href="#" class="pub-card-link">Read more →</a>
-        </div>
-      </article>
-
-      <!-- Card 5 -->
-      <article class="pub-card" data-type="dataset" data-uni="sheffield" tabindex="0">
-        <div class="pub-card-top">
-          <span class="pub-type-badge dataset">Dataset</span>
-          <span class="pub-uni-tag sheffield">University of Sheffield</span>
-        </div>
-        <h3 class="pub-card-title">UK Wind Turbine Performance Dataset 2015–2025: Hourly Output and Maintenance Logs</h3>
-        <p class="pub-card-authors">
-          <span class="lead-author">Dr. Ingrid Svensson</span>, Prof. Tom Barker
-        </p>
-        <p class="pub-card-excerpt">
-          Hourly power output records from 312 onshore turbines across the UK, including structured maintenance logs, weather correlations, and downtime classifications over a decade.
-        </p>
-        <div class="pub-card-footer">
-          <span class="pub-card-date">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-            20 Feb 2026
-          </span>
-          <a href="#" class="pub-card-link">Read more →</a>
-        </div>
-      </article>
-
-      <!-- Card 6 -->
-      <article class="pub-card" data-type="thesis" data-uni="sheffield" tabindex="0">
-        <div class="pub-card-top">
-          <span class="pub-type-badge thesis">Thesis</span>
-          <span class="pub-uni-tag sheffield">University of Sheffield</span>
-        </div>
-        <h3 class="pub-card-title">Quantum Error Correction in Superconducting Qubit Arrays: Novel Surface Code Implementations</h3>
-        <p class="pub-card-authors">
-          <span class="lead-author">Marcus Chen</span>
-        </p>
-        <p class="pub-card-excerpt">
-          Proposes and experimentally validates a modified rotated surface code reducing logical error rates by 34% in near-term superconducting quantum processors operating at 15 mK.
-        </p>
-        <div class="pub-card-footer">
-          <span class="pub-card-date">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-            12 Feb 2026
-          </span>
-          <a href="#" class="pub-card-link">Read more →</a>
-        </div>
-      </article>
-
-      <!-- Empty state (JS shows this when filter returns nothing) -->
-      <div class="pub-empty" id="pubEmpty" aria-live="polite">
-        No publications found for this filter.
-      </div>
-
-    </div><!-- /pub-grid -->
   </section>
-  <!-- ===== END RECENT PUBLICATIONS ===== -->
 
+  <script>
+    // ── CONFIG ────────────────────────────────────────────────────────────────
+    // Change this if your Flask server runs on a different port
+    const API = 'http://localhost:5000';
+
+    // ── stats bar ─────────────────────────────────────────────────────────────
+    fetch(`${API}/api/stats`)
+      .then(r => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return r.json();
+      })
+      .then(data => {
+        document.getElementById('stat-total').textContent =
+          Number(data.total).toLocaleString() + '+';
+      })
+      .catch(() => {
+        document.getElementById('stat-total').textContent = '—';
+      });
+
+    // ── recent publications grid ──────────────────────────────────────────────
+    let currentFilter = 'all';
+    let allRecent = [];
+
+    function uniClass(inst) {
+      if (!inst) return '';
+      if (inst.includes('Leeds'))     return 'leeds';
+      if (inst.includes('Sheffield')) return 'sheffield';
+      if (inst.includes('York'))      return 'york';
+      return '';
+    }
+
+    function typeLabel(type) {
+      const map = { article: 'Journal Article', thesis: 'Thesis',
+                    report: 'Report', dataset: 'Dataset' };
+      return map[type] || 'Publication';
+    }
+
+    function calIcon() {
+      return `<svg width="12" height="12" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2">
+               <rect x="3" y="4" width="18" height="18" rx="2"/>
+               <line x1="16" y1="2" x2="16" y2="6"/>
+               <line x1="8" y1="2" x2="8" y2="6"/>
+               <line x1="3" y1="10" x2="21" y2="10"/>
+             </svg>`;
+    }
+
+    function renderCard(pub) {
+      const uniTag  = pub.institution
+        ? `<span class="pub-uni-tag ${uniClass(pub.institution)}">${pub.institution}</span>`
+        : '';
+      const dateStr = pub.date_display || pub.date_raw || '';
+      const link    = pub.url || pub.doi || '#';
+      return `
+        <article class="pub-card" data-type="${pub.type}" tabindex="0">
+          <div class="pub-card-top">
+            <span class="pub-type-badge ${pub.type}">${typeLabel(pub.type)}</span>
+            ${uniTag}
+          </div>
+          <h3 class="pub-card-title">${pub.title || '(Untitled)'}</h3>
+          ${pub.authors
+            ? `<p class="pub-card-authors"><span class="lead-author">${pub.authors}</span></p>`
+            : ''}
+          ${pub.description
+            ? `<p class="pub-card-excerpt">${pub.description}</p>`
+            : ''}
+          <div class="pub-card-footer">
+            <span class="pub-card-date">${calIcon()} ${dateStr}</span>
+            <a href="${link}" target="_blank" rel="noopener" class="pub-card-link">Read more →</a>
+          </div>
+        </article>`;
+    }
+
+    function renderGrid(filter) {
+      const grid = document.getElementById('pubGrid');
+      const pubs = filter === 'all'
+        ? allRecent
+        : allRecent.filter(p => p.type === filter);
+
+      if (!pubs.length) {
+        grid.innerHTML = '<div class="pub-empty">No publications found for this filter.</div>';
+        return;
+      }
+      grid.innerHTML = pubs.map(renderCard).join('');
+    }
+
+    function showServerError() {
+      document.getElementById('pubGrid').innerHTML = `
+        <div class="pub-empty" style="display:block; background:#fff8f0; border:1px solid #f5c842;
+             border-radius:8px; padding:32px; color:#7a5200; max-width:600px; margin:0 auto; text-align:left;">
+          <strong style="font-size:1rem; display:block; margin-bottom:12px;">
+            ⚠️ Cannot connect to the Flask server
+          </strong>
+          <p style="margin-bottom:12px; font-size:0.9rem; line-height:1.6;">
+            The frontend is working, but it can't reach the API at
+            <code style="background:#f0e0c0; padding:2px 6px; border-radius:4px;">${API}</code>.
+          </p>
+          <p style="font-size:0.88rem; color:#555; margin-bottom:8px;"><strong>To fix this, open a terminal and run:</strong></p>
+          <code style="display:block; background:#1a1a1a; color:#7ec8a4; padding:12px 16px;
+                border-radius:6px; font-size:0.88rem; margin-bottom:12px;">python app.py</code>
+          <p style="font-size:0.82rem; color:#888; line-height:1.6;">
+            Make sure you are in the correct folder and that
+            <code style="background:#f0e0c0; padding:1px 5px; border-radius:3px;">flask</code> and
+            <code style="background:#f0e0c0; padding:1px 5px; border-radius:3px;">flask-cors</code>
+            are installed (<code style="background:#f0e0c0; padding:1px 5px; border-radius:3px;">pip install flask flask-cors</code>).
+            Then refresh this page.
+          </p>
+        </div>`;
+    }
+
+    // Load 12 recent items so filters have something to show
+    fetch(`${API}/api/recent?limit=12`)
+      .then(r => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return r.json();
+      })
+      .then(data => {
+        allRecent = data;
+        renderGrid(currentFilter);
+      })
+      .catch(() => {
+        showServerError();
+      });
+
+    // Filter pills
+    document.querySelectorAll('.pub-filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.pub-filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentFilter = btn.dataset.filter;
+        renderGrid(currentFilter);
+      });
+    });
+
+    // ── hero search ───────────────────────────────────────────────────────────
+    let heroFilterType = 'all';
+
+    document.querySelectorAll('.search-filters .filter-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        document.querySelectorAll('.search-filters .filter-chip')
+          .forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        heroFilterType = chip.dataset.filter;
+      });
+    });
+
+    function doSearch() {
+      const q    = document.getElementById('heroSearch').value.trim();
+      const type = heroFilterType;
+      const params = new URLSearchParams({ q, type, page: 1 });
+      window.location.href = `result.html?${params.toString()}`;
+    }
+
+    document.getElementById('heroSearchBtn').addEventListener('click', doSearch);
+    document.getElementById('heroSearch').addEventListener('keydown', e => {
+      if (e.key === 'Enter') doSearch();
+    });
+  </script>
 
 </body>
 </html>

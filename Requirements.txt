@@ -1,6 +1,2 @@
-flask
-pandas
-scikit-learn
-joblib
-numpy
-gunicorn
+flask>=3.0
+flask-cors>=4.0
