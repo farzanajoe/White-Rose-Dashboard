@@ -355,8 +355,8 @@
 <body>
 
 <header class="top-bar">
-  <div class="left"><a href="index.html"><img src="../assets/whitehomesymbol.png" width="25" alt="Home"></a></div>
-  <div class="center"><img src="../assets/whiteroselogo.png" width="30" alt="Logo"><span class="brand-name">White Rose Publication</span></div>
+  <div class="left"><a href="index.html"><img src="assets/whitehomesymbol.png" width="25" alt="Home"></a></div>
+  <div class="center"><img src="assets/whiteroselogo.png" width="30" alt="Logo"><span class="brand-name">White Rose Publication</span></div>
   <div class="right"><a href="#">Login</a><span class="divider">|</span><a href="#">Create Account</a></div>
 </header>
 
@@ -411,7 +411,10 @@
 </div>
 
 <script>
-  const API = 'http://localhost:5000';
+  // Automatically use the correct API URL based on environment
+  const API = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+  ? 'http://localhost:5000'
+  : window.location.origin;
   
   function getSaved() { try { return JSON.parse(localStorage.getItem('wrp_saved') || '[]'); } catch { return []; } }
   function setSaved(arr) { localStorage.setItem('wrp_saved', JSON.stringify(arr)); }
