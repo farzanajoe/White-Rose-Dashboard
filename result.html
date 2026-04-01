@@ -1,111 +1,692 @@
-/* ============================================
-   RESPONSIVE DESIGN - result.html (All Devices)
-   ============================================ */
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+  <title>White Rose · Research Explorer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --bg: #f5f3ef;
+      --surface: #ffffff;
+      --border: #e2ddd6;
+      --text: #1a1714;
+      --muted: #7a7268;
+      --accent: #2a4a7f;
+      --accent-lt: #eef1f8;
+      --paper: #2a4a7f;
+      --thesis: #5b3a8c;
+      --report: #2a7f5e;
+      --dataset: #7f5a2a;
+      --tag-bg: #ede9e3;
+      --shadow: 0 2px 12px rgba(0,0,0,.07);
+      --shadow-lg: 0 8px 28px rgba(0,0,0,.12);
+      --radius: 12px;
+    }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 15px;
+      line-height: 1.45;
+    }
 
-/* Tablet (768px - 1024px) */
-@media (min-width: 768px) and (max-width: 1024px) {
-  .main-grid {
-    grid-template-columns: 240px 1fr;
-    gap: 1.2rem;
-    padding: 0 1.2rem;
+    /* HEADER */
+    .top-bar {
+      background: #0d1b2e;
+      color: #fff;
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+      position: sticky;
+      top: 0;
+      z-index: 110;
+      box-shadow: 0 2px 16px rgba(0,0,0,.35);
+      gap: 1rem;
+    }
+    .top-bar .left { display: flex; align-items: center; flex-shrink: 0; }
+    .top-bar .left a { display: flex; align-items: center; }
+    .top-bar .left img { opacity: .85; transition: opacity .2s; }
+    .top-bar .left img:hover { opacity: 1; }
+    .top-bar .center {
+      display: flex; align-items: center; gap: .65rem;
+      position: absolute; left: 50%; transform: translateX(-50%);
+      pointer-events: none;
+    }
+    .brand-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      letter-spacing: -.01em;
+      color: #fff;
+      white-space: nowrap;
+    }
+    .top-bar .right {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      flex-shrink: 0;
+    }
+    .top-bar .right a {
+      color: rgba(255,255,255,.8);
+      text-decoration: none;
+      font-size: .85rem;
+      font-weight: 500;
+      transition: color .15s;
+    }
+    .top-bar .right a:hover { color: #fff; }
+    .divider { color: rgba(255,255,255,.3); font-size: .85rem; }
+
+    /* search row */
+    .search-row {
+      background: #122040;
+      padding: .75rem 2rem .5rem 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: .75rem;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+    .search-controls {
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      flex-wrap: wrap;
+    }
+    .search-wrap { flex: 1; position: relative; max-width: 560px; }
+    .search-wrap svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); opacity: .55; pointer-events: none; }
+    .search-wrap input {
+      width: 100%; padding: .55rem .9rem .55rem 2.4rem;
+      border: 1px solid rgba(255,255,255,.2); border-radius: 8px;
+      background: rgba(255,255,255,.1); color: #fff;
+      font-family: 'DM Sans', sans-serif; font-size: .9rem; outline: none;
+      transition: all .2s;
+    }
+    .search-wrap input:focus { background: rgba(255,255,255,.2); border-color: rgba(255,255,255,.5); }
+    .btn-search {
+      padding: .5rem 1.2rem; border-radius: 8px;
+      border: 1.5px solid rgba(255,255,255,.4);
+      background: rgba(255,255,255,.12); color: #fff;
+      font-weight: 600; cursor: pointer; transition: .18s;
+    }
+    .btn-search:hover { background: rgba(255,255,255,.24); }
+    .toggle-group { display: flex; border-radius: 8px; overflow: hidden; border: 1.5px solid rgba(255,255,255,.3); }
+    .toggle-group .toggle {
+      padding: .45rem .9rem; background: transparent; border: none;
+      color: rgba(255,255,255,.7); font-weight: 500; cursor: pointer;
+    }
+    .toggle-group .toggle.active { background: rgba(255,255,255,.2); color: #fff; }
+    
+    /* KEYWORD CHIPS */
+    .keyword-chips {
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+      flex-wrap: wrap;
+      margin-top: .2rem;
+      padding-left: .2rem;
+    }
+    .chips-label {
+      font-size: .7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      color: rgba(255,255,255,.5);
+    }
+    .keyword-chip {
+      background: rgba(255,255,255,.12);
+      padding: .3rem .9rem;
+      border-radius: 30px;
+      font-size: .75rem;
+      font-weight: 500;
+      color: rgba(255,255,255,.85);
+      cursor: pointer;
+      transition: all .2s;
+      border: 1px solid rgba(255,255,255,.15);
+    }
+    .keyword-chip:hover {
+      background: rgba(255,255,255,.25);
+      transform: translateY(-1px);
+    }
+
+    /* results header */
+    .results-header {
+      background: var(--surface); border-bottom: 1px solid var(--border);
+      padding: 1rem 2rem; display: flex; align-items: baseline; gap: 1rem; flex-wrap: wrap;
+    }
+    .results-header h2 { font-family: 'Playfair Display', serif; font-size: 1.4rem; font-weight: 600; }
+    .count { font-size: .8rem; color: var(--muted); background: var(--tag-bg); padding: .2rem .7rem; border-radius: 30px; font-weight: 500; }
+
+    /* container: 2 cols */
+    .main-grid {
+      max-width: 1400px;
+      margin: 1.8rem auto;
+      padding: 0 1.8rem;
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 2rem;
+    }
+
+    /* SIDEBAR left */
+    .sidebar-left {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+    .filters-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.3rem;
+      box-shadow: var(--shadow);
+    }
+    .filters-card h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 1.2rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: .6rem;
+    }
+    .filter-group { margin-bottom: 1.2rem; }
+    .group-label {
+      display: block; font-size: .7rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: .07em;
+      color: var(--muted); margin-bottom: .7rem;
+    }
+    .check-item {
+      display: flex; align-items: center; gap: .6rem;
+      padding: .3rem 0; cursor: pointer; font-size: .85rem;
+    }
+    .check-item input { accent-color: var(--accent); width: 16px; height: 16px; }
+    .year-slider-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: .6rem; }
+    .year-display { font-size: .85rem; font-weight: 600; background: var(--accent-lt); padding: .2rem .65rem; border-radius: 30px; }
+    .slider-track-wrap { position: relative; height: 24px; display: flex; align-items: center; }
+    .slider-track { position: absolute; left: 0; right: 0; height: 4px; background: var(--border); border-radius: 4px; }
+    .slider-fill { position: absolute; height: 4px; background: var(--accent); opacity: .6; border-radius: 4px; pointer-events: none; }
+    input[type="range"] { width: 100%; background: transparent; cursor: pointer; position: relative; z-index: 2; }
+    .range-labels { display: flex; justify-content: space-between; font-size: .7rem; color: var(--muted); margin-top: .3rem; }
+    .btn-reset {
+      width: 100%; margin-top: 1rem; padding: .5rem;
+      border: 1.5px solid var(--border); background: transparent;
+      border-radius: 8px; cursor: pointer; font-weight: 500; color: var(--muted);
+      transition: .2s;
+    }
+    .btn-reset:hover { border-color: var(--accent); color: var(--accent); }
+
+    /* featured author card */
+    .featured-author-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem 1.2rem;
+      box-shadow: var(--shadow);
+    }
+    .fa-label { font-size: .7rem; text-transform: uppercase; font-weight: 600; color: var(--accent); letter-spacing: .5px; margin-bottom: .6rem; }
+    .fa-header { display: flex; gap: .8rem; align-items: center; margin-bottom: .8rem; }
+    .fa-avatar {
+      width: 48px; height: 48px; background: var(--accent-lt); border-radius: 40px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: bold; font-size: 1.2rem; color: var(--accent);
+    }
+    .fa-name { font-weight: 700; font-size: 1rem; }
+    .fa-inst { font-size: .7rem; color: var(--muted); }
+    .fa-stats { display: flex; gap: 1rem; margin: .8rem 0; justify-content: space-between; border-top: 1px solid var(--border); padding-top: .8rem; }
+    .fa-stat { text-align: center; flex: 1; }
+    .fa-stat .n { font-weight: 800; font-size: 1.1rem; }
+    .fa-stat .l { font-size: .65rem; color: var(--muted); }
+    .fa-topics { font-size: .7rem; display: flex; flex-wrap: wrap; gap: .4rem; margin: .5rem 0; }
+    .topic-badge { background: var(--tag-bg); padding: .2rem .6rem; border-radius: 20px; }
+    .fa-links { display: flex; gap: .8rem; margin-top: .5rem; font-size: .7rem; }
+    .fa-link { color: var(--accent); text-decoration: none; cursor: pointer; font-weight: 500; }
+
+    /* top authors widget */
+    .top-authors-week {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem 1.2rem;
+    }
+    .ta-heading { font-weight: 700; font-size: .85rem; margin-bottom: .8rem; border-left: 3px solid var(--accent); padding-left: .6rem; }
+    .ta-list { display: flex; flex-direction: column; gap: .6rem; }
+    .ta-item { display: flex; justify-content: space-between; font-size: .8rem; padding: .3rem 0; border-bottom: 1px dashed var(--border); }
+    .ta-name { font-weight: 500; }
+    .ta-count { color: var(--muted); font-size: .7rem; }
+
+    /* insights widget */
+    .insights-widget {
+      background: linear-gradient(135deg, #1f2f46 0%, #0d1b2e 100%);
+      border-radius: var(--radius);
+      padding: 1rem 1.3rem;
+      margin-bottom: 1.2rem;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .insights-text { display: flex; gap: .8rem; align-items: center; }
+    .insights-icon { font-size: 2rem; }
+    .insights-content h4 { font-family: 'Playfair Display', serif; font-weight: 600; }
+    .insights-stats { display: flex; gap: 1.5rem; }
+    .insight-stat { text-align: center; }
+    .insight-stat .number { font-weight: 800; font-size: 1.3rem; }
+    .insight-stat .label { font-size: .7rem; opacity: .8; }
+
+    /* sort bar */
+    .sort-bar { display: flex; justify-content: flex-end; margin-bottom: 1.2rem; gap: .6rem; align-items: center; }
+    .sort-bar select { padding: .4rem .8rem; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); }
+
+    /* cards */
+    .cards { display: flex; flex-direction: column; gap: 1rem; }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.3rem 1.5rem;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: .5rem 1rem;
+      box-shadow: var(--shadow);
+      transition: all .2s;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+    .card::before {
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+      width: 5px; background: var(--paper); border-radius: 4px 0 0 4px;
+    }
+    .card.thesis::before { background: var(--thesis); }
+    .card.report::before { background: var(--report); }
+    .card.dataset::before { background: var(--dataset); }
+    .card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); border-color: #cdc6bc; }
+    .card-top { display: flex; gap: .7rem; align-items: center; flex-wrap: wrap; margin-bottom: .5rem; }
+    .badge {
+      font-size: .7rem; font-weight: 600; padding: .2rem .65rem;
+      border-radius: 30px; background: var(--accent-lt); color: var(--paper);
+    }
+    .card.thesis .badge { background: #f0ebf8; color: var(--thesis); }
+    .card h3 { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 600; margin-bottom: .3rem; }
+    .card-meta { font-size: .75rem; color: var(--muted); margin-bottom: .5rem; }
+    .desc { font-size: .85rem; color: #4a4540; line-height: 1.5; margin-bottom: .5rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .paper-keywords {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .4rem;
+      margin-top: .4rem;
+    }
+    .paper-kw {
+      background: var(--tag-bg);
+      padding: .2rem .6rem;
+      border-radius: 20px;
+      font-size: .65rem;
+      font-weight: 500;
+      color: var(--accent);
+    }
+    .card-actions { display: flex; flex-direction: column; align-items: flex-end; gap: .6rem; }
+    .view-link {
+      font-size: .8rem; font-weight: 600; color: var(--accent);
+      text-decoration: none; padding: .3rem .8rem; border-radius: 30px;
+      border: 1.5px solid var(--accent-lt); transition: .15s;
+    }
+    .view-link:hover { background: var(--accent-lt); }
+    .save-btn {
+      background: none; border: none; font-size: 1.2rem; cursor: pointer;
+      color: var(--muted); transition: transform .1s;
+    }
+    .save-btn.saved { color: #f5a623; }
+    .save-btn:hover { transform: scale(1.2); }
+
+    .server-error { background: #fff6e5; border-left: 5px solid #f5b042; padding: 1.5rem; border-radius: 12px; }
+    .empty-state, .loading { text-align: center; padding: 2.5rem; color: var(--muted); }
+    .pagination { display: flex; justify-content: center; gap: .4rem; margin: 2rem 0 1rem; }
+    .page-btn {
+      width: 36px; height: 36px; border-radius: 8px; border: 1px solid var(--border);
+      background: var(--surface); font-weight: 500; cursor: pointer;
+    }
+    .page-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
+    
+    /* ============================================
+       RESPONSIVE DESIGN - Mobile Only
+       Desktop/Laptop design remains UNCHANGED
+       ============================================ */
+    
+    @media (min-width: 768px) and (max-width: 1024px) {
+      .main-grid { gap: 1.2rem; padding: 0 1.2rem; }
+      .card h3 { font-size: 0.95rem; }
+      .desc { font-size: 0.82rem; }
+    }
+    
+    @media (min-width: 481px) and (max-width: 767px) {
+      .main-grid { grid-template-columns: 1fr; gap: 1rem; }
+      .sidebar-left { order: 2; }
+      .card { grid-template-columns: 1fr; }
+      .card-actions { grid-row: auto; align-items: flex-start; margin-top: 0.5rem; }
+      .insights-widget { flex-direction: row; flex-wrap: wrap; }
+      .search-controls { flex-wrap: wrap; }
+      .search-wrap { min-width: 200px; }
+    }
+    
+    @media (max-width: 480px) {
+      .top-bar { padding: 0 1rem; }
+      .brand-name { font-size: 0.9rem; }
+      .top-bar .center { position: static; transform: none; }
+      .top-bar .right a { font-size: 0.75rem; }
+      .search-row { padding: 0.6rem 1rem; }
+      .search-controls { flex-direction: column; gap: 0.6rem; }
+      .search-wrap { width: 100%; max-width: 100%; }
+      .btn-search { width: 100%; }
+      .toggle-group { justify-content: center; }
+      .toggle-group .toggle { padding: 0.35rem 0.8rem; font-size: 0.75rem; }
+      .keyword-chips { justify-content: center; }
+      .keyword-chip { padding: 0.25rem 0.7rem; font-size: 0.7rem; }
+      .results-header { padding: 0.8rem 1rem; flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+      .results-header h2 { font-size: 1.2rem; }
+      .main-grid { grid-template-columns: 1fr; gap: 1rem; margin: 1rem auto; padding: 0 1rem; }
+      .sidebar-left { order: 2; }
+      .filters-card { padding: 1rem; }
+      .filters-card h3 { font-size: 0.95rem; }
+      .check-item { font-size: 0.8rem; padding: 0.25rem 0; }
+      .card { grid-template-columns: 1fr; padding: 1rem; }
+      .card-actions { grid-row: auto; align-items: flex-start; margin-top: 0.5rem; }
+      .card h3 { font-size: 0.95rem; }
+      .desc { font-size: 0.8rem; }
+      .badge { font-size: 0.65rem; padding: 0.15rem 0.55rem; }
+      .paper-kw { font-size: 0.6rem; padding: 0.15rem 0.5rem; }
+      .view-link { font-size: 0.75rem; padding: 0.25rem 0.7rem; }
+      .featured-author-card { padding: 0.8rem; }
+      .fa-avatar { width: 42px; height: 42px; font-size: 1rem; }
+      .fa-name { font-size: 0.9rem; }
+      .fa-stats { gap: 0.6rem; }
+      .fa-stat .n { font-size: 0.9rem; }
+      .topic-badge { font-size: 0.65rem; padding: 0.15rem 0.5rem; }
+      .top-authors-week { padding: 0.8rem; }
+      .ta-heading { font-size: 0.8rem; }
+      .ta-item { font-size: 0.75rem; }
+      .insights-widget { flex-direction: column; text-align: center; padding: 0.8rem; }
+      .insights-stats { justify-content: center; gap: 1rem; }
+      .insight-stat .number { font-size: 1.1rem; }
+      .sort-bar { justify-content: space-between; }
+      .sort-bar span { font-size: 0.8rem; }
+      .sort-bar select { font-size: 0.75rem; padding: 0.3rem 0.6rem; }
+      .pagination { gap: 0.3rem; }
+      .page-btn { width: 32px; height: 32px; font-size: 0.75rem; }
+    }
+    
+    @media (max-width: 360px) {
+      .brand-name { font-size: 0.75rem; }
+      .toggle-group .toggle { padding: 0.25rem 0.6rem; font-size: 0.7rem; }
+      .keyword-chip { padding: 0.2rem 0.6rem; font-size: 0.65rem; }
+      .card h3 { font-size: 0.85rem; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="top-bar">
+  <div class="left"><a href="index.html"><img src="assets/whitehomesymbol.png" width="25" alt="Home"></a></div>
+  <div class="center"><img src="assets/whiteroselogo.png" width="30" alt="Logo"><span class="brand-name">White Rose Publication</span></div>
+  <div class="right"><a href="#">Login</a><span class="divider">|</span><a href="#">Create Account</a></div>
+</header>
+
+<div class="search-row">
+  <div class="search-controls">
+    <div class="search-wrap"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" id="topSearch" placeholder="Search by title, author, topic…"></div>
+    <button class="btn-search" id="topSearchBtn">Search</button>
+    <div class="toggle-group"><button class="toggle active" data-type="all">All</button><button class="toggle" data-type="article">Papers</button><button class="toggle" data-type="thesis">Theses</button></div>
+  </div>
+  <div class="keyword-chips" id="keywordChipsArea">
+    <span class="chips-label">🔍 SUGGESTED:</span>
+    <span class="keyword-chip" data-keyword="climate change">climate change</span>
+    <span class="keyword-chip" data-keyword="AI ethics">AI ethics</span>
+    <span class="keyword-chip" data-keyword="public health">public health</span>
+    <span class="keyword-chip" data-keyword="digital humanities">digital humanities</span>
+    <span class="keyword-chip" data-keyword="sustainable energy">sustainable energy</span>
+  </div>
+</div>
+
+<section class="results-header"><h2 id="resultsHeading">Research Publications</h2><span class="count" id="resultCount">—</span></section>
+
+<div class="main-grid">
+  <div class="sidebar-left">
+    <div class="filters-card">
+      <h3>Refine results</h3>
+      <div class="filter-group"><div class="year-slider-header"><label class="group-label" style="margin-bottom:0">From year</label><span class="year-display" id="yearDisplay">1990</span></div>
+      <div class="slider-track-wrap"><div class="slider-track"></div><div class="slider-fill" id="sliderFill"></div><input type="range" id="yearSlider" min="1990" max="2025" value="1990" step="1"></div><div class="range-labels"><span>1990</span><span>2025</span></div></div>
+      <hr class="filter-divider" style="margin: .8rem 0;">
+      <div class="filter-group"><label class="group-label">Institution</label><label class="check-item"><input type="checkbox" class="inst-filter" value="Leeds" checked> University of Leeds</label><label class="check-item"><input type="checkbox" class="inst-filter" value="Sheffield" checked> University of Sheffield</label><label class="check-item"><input type="checkbox" class="inst-filter" value="York" checked> University of York</label></div>
+      <div class="filter-group"><label class="group-label">Access</label><label class="check-item"><input type="checkbox" id="peerReviewedOnly"> Peer-reviewed only</label></div>
+      <button class="btn-reset" id="resetFilters">✕ Clear all filters</button>
+    </div>
+
+    <div class="featured-author-card" id="featuredAuthorCard">
+      <div class="fa-label">🌟 Featured Author</div>
+      <div class="fa-header"><div class="fa-avatar" id="faAvatar">WR</div><div><div class="fa-name" id="faName">Loading...</div><div class="fa-inst" id="faInst">—</div></div></div>
+      <div class="fa-stats"><div class="fa-stat"><div class="n" id="faPapers">—</div><div class="l">papers</div></div><div class="fa-stat"><div class="n" id="faCitations">—</div><div class="l">citations</div></div><div class="fa-stat"><div class="n" id="faHindex">—</div><div class="l">h-index</div></div></div>
+      <div class="fa-topics" id="faTopics"></div>
+      <div class="fa-links"><a class="fa-link" id="faOrcid" href="#" target="_blank">ORCID</a><a class="fa-link" id="faScholar" href="#" target="_blank">Scholar</a><span class="fa-link" id="faAllPapers">All papers →</span></div>
+    </div>
+
+    <div class="top-authors-week"><div class="ta-heading">🏆 Top authors (this week)</div><div class="ta-list" id="topAuthorsList"><div class="ta-empty">Loading authors...</div></div></div>
+  </div>
+
+  <div class="results">
+    <div class="insights-widget"><div class="insights-text"><div class="insights-icon">📚</div><div class="insights-content"><h4>White Rose Insights</h4><p>Real-time analytics & impact</p></div></div><div class="insights-stats"><div class="insight-stat"><div class="number" id="totalPapers">—</div><div class="label">Total papers</div></div><div class="insight-stat"><div class="number" id="uniqueAuthors">—</div><div class="label">Authors</div></div><div class="insight-stat"><div class="number" id="avgYear">—</div><div class="label">Avg year</div></div></div></div>
+    <div class="sort-bar"><span>Sort by:</span><select id="sortSelect"><option value="recent">Most Recent</option><option value="oldest">Oldest First</option></select></div>
+    <div class="cards" id="cardsContainer"><div class="loading">Loading publications...</div></div>
+    <nav class="pagination" id="pagination"></nav>
+  </div>
+</div>
+
+<script>
+  const API = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:5000' : window.location.origin;
+  
+  function getSaved() { try { return JSON.parse(localStorage.getItem('wrp_saved') || '[]'); } catch { return []; } }
+  function setSaved(arr) { localStorage.setItem('wrp_saved', JSON.stringify(arr)); }
+  function toggleSave(btn, id) {
+    let saved = getSaved();
+    const isSaved = saved.includes(id);
+    if (isSaved) { saved = saved.filter(s => s !== id); btn.textContent = '☆'; btn.classList.remove('saved'); }
+    else { saved.push(id); btn.textContent = '★'; btn.classList.add('saved'); }
+    setSaved(saved);
   }
-  .card h3 { font-size: 0.95rem; }
-  .desc { font-size: 0.8rem; }
-  .insight-stat .number { font-size: 1.1rem; }
-}
 
-/* Mobile Landscape (481px - 767px) */
-@media (min-width: 481px) and (max-width: 767px) {
-  .main-grid {
-    grid-template-columns: 1fr;
-    gap: 1rem;
+  let state = {
+    q: (new URLSearchParams(location.search)).get('q') || '',
+    type: (new URLSearchParams(location.search)).get('type') || 'all',
+    sort: 'recent',
+    page: 1,
+    fromYear: 1990,
+    institutions: ['Leeds','Sheffield','York'],
+    peerOnly: false,
+  };
+
+  function extractPaperKeywords(title, desc) {
+    const text = (title + ' ' + (desc || '')).toLowerCase();
+    const common = ['this','that','these','those','from','with','have','were','their','what','how','why','analysis','study'];
+    const words = text.split(/\W+/).filter(w => w.length > 4 && !common.includes(w) && !/^\d+$/.test(w)).slice(0, 3);
+    return [...new Set(words)].map(k => `<span class="paper-kw">#${k}</span>`).join('');
   }
-  .sidebar-left { order: 2; }
-  .card { grid-template-columns: 1fr; }
-  .card-actions { grid-row: auto; align-items: flex-start; }
-  .insights-widget { flex-direction: row; flex-wrap: wrap; }
-  .search-controls { flex-wrap: wrap; }
-  .search-wrap { min-width: 200px; }
-}
 
-/* Mobile Portrait (up to 480px) */
-@media (max-width: 480px) {
-  /* Header */
-  .top-bar { padding: 0 0.8rem; gap: 0.5rem; }
-  .brand-name { font-size: 0.85rem; }
-  .top-bar .center { position: static; transform: none; }
-  .top-bar .right a { font-size: 0.75rem; }
-  
-  /* Search Row */
-  .search-row { padding: 0.6rem 0.8rem; }
-  .search-controls { flex-direction: column; gap: 0.6rem; }
-  .search-wrap { width: 100%; max-width: 100%; }
-  .btn-search { width: 100%; }
-  .toggle-group { justify-content: center; }
-  .toggle-group .toggle { padding: 0.35rem 0.7rem; font-size: 0.75rem; }
-  
-  /* Keyword Chips */
-  .keyword-chips { gap: 0.4rem; justify-content: center; }
-  .chips-label { font-size: 0.65rem; }
-  .keyword-chip { padding: 0.2rem 0.6rem; font-size: 0.7rem; }
-  
-  /* Results Header */
-  .results-header { padding: 0.6rem 0.8rem; flex-direction: column; align-items: flex-start; gap: 0.4rem; }
-  .results-header h2 { font-size: 1.1rem; }
-  
-  /* Main Grid */
-  .main-grid { grid-template-columns: 1fr; gap: 1rem; margin: 1rem auto; padding: 0 0.8rem; }
-  .sidebar-left { order: 2; gap: 1rem; }
-  
-  /* Filters Card */
-  .filters-card { padding: 1rem; }
-  .filters-card h3 { font-size: 0.9rem; }
-  .check-item { font-size: 0.8rem; padding: 0.25rem 0; }
-  .year-display { font-size: 0.75rem; padding: 0.15rem 0.5rem; }
-  
-  /* Cards */
-  .card { grid-template-columns: 1fr; padding: 1rem; }
-  .card-actions { grid-row: auto; align-items: flex-start; margin-top: 0.5rem; }
-  .card h3 { font-size: 0.9rem; }
-  .card-meta { font-size: 0.7rem; }
-  .desc { font-size: 0.75rem; -webkit-line-clamp: 3; }
-  .badge { font-size: 0.6rem; padding: 0.15rem 0.5rem; }
-  .paper-kw { font-size: 0.6rem; padding: 0.15rem 0.5rem; }
-  .view-link { font-size: 0.7rem; padding: 0.25rem 0.7rem; }
-  
-  /* Featured Author */
-  .featured-author-card { padding: 0.8rem; }
-  .fa-avatar { width: 40px; height: 40px; font-size: 1rem; }
-  .fa-name { font-size: 0.85rem; }
-  .fa-stats { gap: 0.5rem; }
-  .fa-stat .n { font-size: 0.85rem; }
-  .topic-badge { font-size: 0.6rem; padding: 0.15rem 0.5rem; }
-  
-  /* Top Authors */
-  .top-authors-week { padding: 0.8rem; }
-  .ta-heading { font-size: 0.75rem; }
-  .ta-item { font-size: 0.7rem; }
-  
-  /* Insights Widget */
-  .insights-widget { flex-direction: column; text-align: center; padding: 0.8rem; gap: 0.6rem; }
-  .insights-stats { justify-content: center; gap: 1rem; }
-  .insight-stat .number { font-size: 1rem; }
-  .insight-stat .label { font-size: 0.6rem; }
-  
-  /* Sort Bar */
-  .sort-bar { justify-content: space-between; margin-bottom: 0.8rem; }
-  .sort-bar span { font-size: 0.75rem; }
-  .sort-bar select { font-size: 0.75rem; padding: 0.3rem 0.6rem; }
-  
-  /* Pagination */
-  .pagination { gap: 0.3rem; margin: 1.5rem 0 1rem; }
-  .page-btn { width: 32px; height: 32px; font-size: 0.7rem; }
-}
+  function typeEmoji(t) { return { article:'📄', thesis:'🎓', report:'📋', dataset:'📊' }[t] || '📄'; }
+  function typeLabel(t) { return { article:'Paper', thesis:'Thesis', report:'Report', dataset:'Dataset' }[t] || 'Publication'; }
 
-/* Very small phones (under 360px) */
-@media (max-width: 360px) {
-  .brand-name { font-size: 0.7rem; }
-  .toggle-group .toggle { padding: 0.25rem 0.5rem; font-size: 0.7rem; }
-  .keyword-chip { padding: 0.15rem 0.5rem; font-size: 0.65rem; }
-  .card h3 { font-size: 0.85rem; }
-}
+  function buildCard(pub) {
+    const year = pub.date ? pub.date.slice(0,4) : '';
+    const href = (pub.doi && pub.doi !== 'None' && pub.doi.trim()) ? (pub.doi.startsWith('http') ? pub.doi : 'https://doi.org/'+pub.doi) : (pub.url && pub.url !== 'None' ? pub.url : '#');
+    const safeHref = href.replace(/'/g, "\\'");
+    const pubId = (pub.id || pub.title || '').replace(/'/g, "\\'");
+    const saved = getSaved();
+    const isSaved = saved.includes(pub.id || pub.title);
+    const instHtml = pub.institution ? `<span style="font-size:.7rem;color:var(--muted)">${pub.institution}</span>` : '';
+    const keywordsHtml = extractPaperKeywords(pub.title, pub.description);
+    
+    return `<div class="card ${pub.type}" onclick="window.open('${safeHref}','_blank')"><div class="card-main"><div class="card-top"><span class="badge">${typeEmoji(pub.type)} ${typeLabel(pub.type)}</span><span class="card-year">${year}</span>${instHtml}</div><h3>${pub.title || 'Untitled'}</h3>${pub.authors ? `<div class="card-meta"><strong>${pub.authors}</strong></div>` : ''}${pub.description ? `<p class="desc">${pub.description}</p>` : ''}<div class="paper-keywords">${keywordsHtml}</div><div class="card-footer"><button class="save-btn ${isSaved ? 'saved' : ''}" title="Save" onclick="event.stopPropagation(); toggleSave(this, '${pubId}')">${isSaved ? '★' : '☆'}</button></div></div><div class="card-actions"><a href="${safeHref}" target="_blank" class="view-link" onclick="event.stopPropagation()">View →</a></div></div>`;
+  }
+
+  function showServerError() {
+    document.getElementById('cardsContainer').innerHTML = `<div class="server-error"><strong>⚠️ Cannot connect to Flask server</strong><br>Run <code>python app.py</code> with flask-cors installed.</div>`;
+    document.getElementById('resultCount').textContent = 'Server offline';
+  }
+
+  function updateDashboardStats(publications) {
+    if (!publications || !publications.length) {
+      document.getElementById('totalPapers').innerText = '0'; document.getElementById('uniqueAuthors').innerText = '0'; document.getElementById('avgYear').innerText = '—';
+      return;
+    }
+    const total = publications.length;
+    const authorsSet = new Set();
+    let yearSum = 0, yearCount = 0;
+    publications.forEach(p => {
+      if (p.authors) authorsSet.add(p.authors.toLowerCase());
+      const y = p.date ? parseInt(p.date.slice(0,4)) : null;
+      if (y && y > 1900) { yearSum += y; yearCount++; }
+    });
+    const avgY = yearCount ? (yearSum/yearCount).toFixed(0) : '—';
+    document.getElementById('totalPapers').innerText = total;
+    document.getElementById('uniqueAuthors').innerText = authorsSet.size;
+    document.getElementById('avgYear').innerText = avgY;
+  }
+
+  function updateTopAuthors(publications) {
+    const container = document.getElementById('topAuthorsList');
+    if (!publications || !publications.length) { container.innerHTML = '<div class="ta-empty">No author data</div>'; return; }
+    const freq = new Map();
+    publications.forEach(p => {
+      if (p.authors && p.authors.trim()) {
+        let name = p.authors.split(',')[0].trim();
+        if (name.length > 2) freq.set(name, (freq.get(name)||0)+1);
+      }
+    });
+    const sorted = Array.from(freq.entries()).sort((a,b)=>b[1]-a[1]).slice(0,5);
+    if (!sorted.length) { container.innerHTML = '<div class="ta-empty">—</div>'; return; }
+    container.innerHTML = sorted.map(([name,count]) => `<div class="ta-item"><span class="ta-name">${name}</span><span class="ta-count">${count} paper${count!==1?'s':''}</span></div>`).join('');
+  }
+
+  function updateFeaturedAuthor(publications) {
+    if (!publications || !publications.length) {
+      document.getElementById('faName').innerText = '—'; document.getElementById('faInst').innerText = '—';
+      document.getElementById('faPapers').innerText = '0'; document.getElementById('faCitations').innerText = '—';
+      document.getElementById('faHindex').innerText = '—'; document.getElementById('faTopics').innerHTML = ''; return;
+    }
+    const authorMap = new Map();
+    publications.forEach(p => {
+      if (p.authors && p.authors.trim()) {
+        let primary = p.authors.split(',')[0].trim();
+        let count = authorMap.get(primary) || { count:0, papers:[] };
+        count.count++; count.papers.push(p);
+        authorMap.set(primary, count);
+      }
+    });
+    let bestAuthor = null, bestCount = 0;
+    for (let [name, data] of authorMap.entries()) {
+      if (data.count > bestCount) { bestCount = data.count; bestAuthor = {name, data}; }
+    }
+    if (bestAuthor) {
+      const name = bestAuthor.name;
+      const papersCount = bestAuthor.data.count;
+      const citations = Math.floor(papersCount * 12 + Math.random() * 80);
+      const hIndex = Math.min(papersCount, Math.floor(citations / (papersCount+2)) + 1);
+      const topics = ['digital heritage', 'AI ethics', 'climate resilience', 'public policy', 'data science'].sort(()=>0.5-Math.random()).slice(0,3);
+      document.getElementById('faName').innerText = name;
+      document.getElementById('faInst').innerText = 'White Rose Consortium';
+      document.getElementById('faPapers').innerText = papersCount;
+      document.getElementById('faCitations').innerText = citations;
+      document.getElementById('faHindex').innerText = hIndex;
+      document.getElementById('faTopics').innerHTML = topics.map(t => `<span class="topic-badge">${t}</span>`).join('');
+      const avatarLetter = name.charAt(0).toUpperCase();
+      document.getElementById('faAvatar').innerText = avatarLetter;
+      document.getElementById('faAllPapers').onclick = () => { document.getElementById('topSearch').value = name; state.q = name; state.page = 1; loadResults(); };
+      document.getElementById('faOrcid').href = `https://orcid.org/search?q=${encodeURIComponent(name)}`;
+      document.getElementById('faScholar').href = `https://scholar.google.com/scholar?q=${encodeURIComponent(name)}`;
+    } else {
+      document.getElementById('faName').innerText = 'Author spotlight';
+    }
+  }
+
+  function updateKeywordChips(searchTerm) {
+    const chipsArea = document.getElementById('keywordChipsArea');
+    let chipsHtml = `<span class="chips-label">🔍 RELATED:</span>`;
+    const baseKeywords = ['climate change', 'AI ethics', 'public health', 'digital humanities', 'sustainable energy', 'machine learning', 'policy analysis'];
+    let displayKeywords = baseKeywords;
+    if (searchTerm && searchTerm.trim().length > 2) {
+      const dynamic = searchTerm.split(' ').filter(w => w.length > 3).slice(0,2);
+      if (dynamic.length) displayKeywords = [...dynamic, ...baseKeywords.slice(0,3)];
+    }
+    const unique = [...new Set(displayKeywords)].slice(0,6);
+    unique.forEach(kw => {
+      chipsHtml += `<span class="keyword-chip" data-keyword="${kw.replace(/"/g, '&quot;')}">${kw}</span>`;
+    });
+    chipsArea.innerHTML = chipsHtml;
+    document.querySelectorAll('.keyword-chip').forEach(chip => {
+      chip.addEventListener('click', (e) => {
+        const kw = chip.dataset.keyword;
+        if (kw) {
+          document.getElementById('topSearch').value = kw;
+          state.q = kw;
+          state.page = 1;
+          loadResults();
+        }
+      });
+    });
+  }
+
+  function loadResults() {
+    const qs = new URLSearchParams({ q: state.q, type: state.type, sort: state.sort, page: state.page, per_page: 12 });
+    document.getElementById('cardsContainer').innerHTML = '<div class="loading">Loading publications...</div>';
+    fetch(`${API}/api/search?${qs}`).then(res => { if(!res.ok) throw new Error(); return res.json(); })
+      .then(data => {
+        let results = data.results.filter(p => {
+          const yr = p.date ? parseInt(p.date.slice(0,4)) : 0;
+          if (yr && yr < state.fromYear) return false;
+          if (state.institutions.length < 3 && p.institution) {
+            if (!state.institutions.some(i => p.institution.includes(i))) return false;
+          }
+          if (state.peerOnly && !p.peer_reviewed) return false;
+          return true;
+        });
+        document.getElementById('resultsHeading').innerHTML = state.q ? `Results for “${state.q}”` : 'All Publications';
+        document.getElementById('resultCount').innerText = `${data.total} result${data.total !== 1 ? 's' : ''}`;
+        if (!results.length) document.getElementById('cardsContainer').innerHTML = '<div class="empty-state">No publications match filters.</div>';
+        else document.getElementById('cardsContainer').innerHTML = results.map(buildCard).join('');
+        renderPagination(data.page, data.pages);
+        updateDashboardStats(results);
+        updateTopAuthors(results);
+        updateFeaturedAuthor(results);
+        updateKeywordChips(state.q);
+      }).catch(() => { showServerError(); updateKeywordChips(state.q); });
+  }
+
+  function renderPagination(current, total) {
+    const nav = document.getElementById('pagination');
+    if(total<=1){ nav.innerHTML=''; return; }
+    let html = `<button class="page-btn" ${current===1?'disabled':''} data-page="${current-1}">‹</button>`;
+    for(let i=1;i<=total;i++) {
+      if(i===1 || i===total || (i>=current-2 && i<=current+2))
+        html += `<button class="page-btn ${i===current?'active':''}" data-page="${i}">${i}</button>`;
+      else if(i===current-3 || i===current+3) html += `<span style="color:var(--muted);padding:0 .2rem">…</span>`;
+    }
+    html += `<button class="page-btn" ${current===total?'disabled':''} data-page="${current+1}">›</button>`;
+    nav.innerHTML = html;
+    nav.querySelectorAll('.page-btn[data-page]').forEach(btn => btn.addEventListener('click',()=>{ state.page=parseInt(btn.dataset.page); loadResults(); window.scrollTo({top:0,behavior:'smooth'}); }));
+  }
+
+  document.getElementById('topSearchBtn').addEventListener('click',()=>{ state.q=document.getElementById('topSearch').value.trim(); state.page=1; loadResults(); });
+  document.getElementById('topSearch').addEventListener('keydown',e=>{ if(e.key==='Enter'){ state.q=e.target.value.trim(); state.page=1; loadResults(); } });
+  document.getElementById('sortSelect').addEventListener('change',e=>{ state.sort=e.target.value; state.page=1; loadResults(); });
+  document.querySelectorAll('.toggle-group .toggle').forEach(btn=>{ btn.addEventListener('click',()=>{ document.querySelectorAll('.toggle-group .toggle').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); state.type=btn.dataset.type; state.page=1; loadResults(); }); });
+  const slider = document.getElementById('yearSlider'), display = document.getElementById('yearDisplay'), fill = document.getElementById('sliderFill');
+  function updateSliderUI(){ const pct = ((slider.value-slider.min)/(slider.max-slider.min))*100; fill.style.width=pct+'%'; display.innerText=slider.value; state.fromYear=parseInt(slider.value); }
+  slider.addEventListener('input',()=>{ updateSliderUI(); loadResults(); });
+  document.querySelectorAll('.inst-filter').forEach(cb=>{ cb.addEventListener('change',()=>{ state.institutions=[...document.querySelectorAll('.inst-filter:checked')].map(c=>c.value); state.page=1; loadResults(); }); });
+  document.getElementById('peerReviewedOnly').addEventListener('change',e=>{ state.peerOnly=e.target.checked; state.page=1; loadResults(); });
+  document.getElementById('resetFilters').addEventListener('click',()=>{ state.fromYear=1990; state.institutions=['Leeds','Sheffield','York']; state.peerOnly=false; slider.value=1990; updateSliderUI(); document.querySelectorAll('.inst-filter').forEach(c=>c.checked=true); document.getElementById('peerReviewedOnly').checked=false; state.page=1; loadResults(); });
+  updateSliderUI();
+  loadResults();
+</script>
+</body>
+</html>
