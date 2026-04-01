@@ -1,24 +1,23 @@
 """
 White Rose Publication – Flask Backend
-Reads combined_papers_theses.csv and exposes a REST search API.
-
-Run:  python app.py
-Endpoints:
-  GET /api/search?q=&type=all|article|thesis|report|dataset&page=1&per_page=9
-  GET /api/stats
-  GET /api/recent?limit=12
-  GET /api/health
+Deployment-ready for Render
 """
 
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
-import csv, ast, re, os, math, sys
+import csv
+import ast
+import re
+import os
+import math
+import sys
 from datetime import datetime
+from pathlib import Path
 
-# Raise CSV field size limit — some abstract fields exceed the 128KB default
+# Raise CSV field size limit
 csv.field_size_limit(min(sys.maxsize, 2147483647))
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='.', static_url_path='')
 CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 # ── data path ─────────────────────────────────────────────────────────────────
@@ -31,7 +30,7 @@ def parse_sets(raw):
     """
     The 'sets' column is a stringified dict, e.g.:
       {'status': 'pub', 'institution': 'Sheffield', 'unit': '...'}
-    Extract 'institution' directly. Falls back to scanning the raw string.
+    Extract 'institution' directly.
     """
     try:
         d = ast.literal_eval(raw)
@@ -59,7 +58,7 @@ def parse_date(raw):
     return f"{m.group(1)}-01-01" if m else ""
 
 def fmt_date(iso):
-    """Format ISO date as '7 Jun 2002', Windows-safe (no %-d)."""
+    """Format ISO date as '7 Jun 2002'"""
     if not iso:
         return ""
     try:
@@ -93,20 +92,26 @@ def load_data():
     global PUBLICATIONS
     if not os.path.exists(DATA_PATH):
         print(f"WARNING: CSV not found at {os.path.abspath(DATA_PATH)}")
-        return
+        # Try alternative path for Render deployment
+        alt_path = Path(__file__).parent / "data" / "combined_papers_theses.csv"
+        if alt_path.exists():
+            global DATA_PATH
+            DATA_PATH = str(alt_path)
+            print(f"Found data at: {DATA_PATH}")
+        else:
+            print("No data file found. Using sample data.")
+            create_sample_data()
+            return
 
     with open(DATA_PATH, newline="", encoding="utf-8") as f:
         reader = csv.DictReader(f, delimiter=",")
         skipped = 0
         for row in reader:
-
-            # skip blank-title rows
             title = str(row.get("title", "")).strip()
             if not title:
                 skipped += 1
                 continue
 
-            # doc type — CSV has "Article", "Thesis", etc. (capitalised)
             raw_type = str(row.get("doctype", row.get("type", ""))).lower().strip()
             if "thesis" in raw_type or "thes" in raw_type:
                 doc_type = "thesis"
@@ -117,7 +122,6 @@ def load_data():
             else:
                 doc_type = "article"
 
-            # institution — parsed from the sets dict string
             inst_short = parse_sets(str(row.get("sets", "")))
             institution = f"University of {inst_short}" if inst_short else ""
 
@@ -144,7 +148,49 @@ def load_data():
     PUBLICATIONS.sort(key=lambda p: p["date"], reverse=True)
     print(f"Loaded {len(PUBLICATIONS)} publications. (skipped {skipped} blank-title rows)")
 
-load_data()
+def create_sample_data():
+    """Create sample data if CSV is missing"""
+    global PUBLICATIONS
+    sample_papers = [
+        {
+            "id": "1",
+            "title": "Advances in Machine Learning for Healthcare",
+            "authors": "Smith, J., Johnson, M.",
+            "description": "This paper explores novel machine learning approaches for medical diagnosis...",
+            "date": "2024-03-15",
+            "type": "article",
+            "institution": "University of Leeds",
+            "url": "#",
+            "doi": "10.1234/example.1",
+            "peer_reviewed": True,
+        },
+        {
+            "id": "2",
+            "title": "Sustainable Energy Solutions for Urban Environments",
+            "authors": "Williams, E., Brown, T.",
+            "description": "Research on renewable energy integration in city planning...",
+            "date": "2023-11-20",
+            "type": "article",
+            "institution": "University of Sheffield",
+            "url": "#",
+            "doi": "10.1234/example.2",
+            "peer_reviewed": True,
+        },
+        {
+            "id": "3",
+            "title": "AI Ethics Framework for Autonomous Systems",
+            "authors": "Davis, A.",
+            "description": "A comprehensive framework for ethical AI development and deployment...",
+            "date": "2024-01-10",
+            "type": "thesis",
+            "institution": "University of York",
+            "url": "#",
+            "doi": "",
+            "peer_reviewed": False,
+        },
+    ]
+    PUBLICATIONS = sample_papers
+    print(f"Loaded {len(PUBLICATIONS)} sample publications")
 
 # ── search helper ─────────────────────────────────────────────────────────────
 
@@ -161,21 +207,26 @@ def matches(pub, q, doc_type):
                 return False
     return True
 
-# ── CORS on every response ────────────────────────────────────────────────────
-
-@app.after_request
-def add_cors_headers(response):
-    response.headers["Access-Control-Allow-Origin"]  = "*"
-    response.headers["Access-Control-Allow-Methods"] = "GET, OPTIONS"
-    response.headers["Access-Control-Allow-Headers"] = "Content-Type"
-    return response
-
 # ── routes ────────────────────────────────────────────────────────────────────
+
+@app.route("/")
+def index():
+    """Serve the main HTML page"""
+    return send_from_directory('.', 'index.html')
+
+@app.route("/result.html")
+def result_page():
+    """Serve the search results page"""
+    return send_from_directory('.', 'result.html')
+
+@app.route("/<path:path>")
+def serve_static(path):
+    """Serve static files (assets, CSS, etc.)"""
+    return send_from_directory('.', path)
 
 @app.route("/api/health")
 def health():
     return jsonify({"status": "ok", "publications": len(PUBLICATIONS)})
-
 
 @app.route("/api/stats")
 def stats():
@@ -186,13 +237,11 @@ def stats():
         "theses_per_day": "~2-3",
     })
 
-
 @app.route("/api/recent")
 def recent():
     limit = min(int(request.args.get("limit", 12)), 50)
     results = [{**p, "date_display": fmt_date(p["date"])} for p in PUBLICATIONS[:limit]]
     return jsonify(results)
-
 
 @app.route("/api/search")
 def search():
@@ -243,11 +292,13 @@ def search():
         "results":  items,
     })
 
+# Load data
+load_data()
 
 if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5000))
     print("\n" + "=" * 50)
     print("  White Rose Publication API")
-    print("  Running at http://localhost:5000")
-    print("  Health:     http://localhost:5000/api/health")
+    print(f"  Running on port {port}")
     print("=" * 50 + "\n")
-    app.run(debug=True, port=5000, host="0.0.0.0")
+    app.run(debug=False, port=port, host="0.0.0.0")
