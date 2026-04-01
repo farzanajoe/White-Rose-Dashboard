@@ -2,93 +2,420 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover" />
   <title>White Rose Publication</title>
-  <link rel="stylesheet" href="static/styles.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    :root {
+      --bg: #f5f3ef;
+      --surface: #ffffff;
+      --border: #e2ddd6;
+      --text: #1a1714;
+      --muted: #7a7268;
+      --accent: #2a4a7f;
+      --accent-lt: #eef1f8;
+      --shadow: 0 2px 12px rgba(0,0,0,.07);
+      --radius: 12px;
+    }
+    
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 16px;
+      line-height: 1.5;
+    }
+    
+    /* Header */
+    .top-bar {
+      background: #0d1b2e;
+      color: #fff;
+      padding: 0 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+      position: sticky;
+      top: 0;
+      z-index: 110;
+      box-shadow: 0 2px 16px rgba(0,0,0,.35);
+      gap: 0.5rem;
+    }
+    .top-bar .left { display: flex; align-items: center; flex-shrink: 0; }
+    .top-bar .left a { display: flex; align-items: center; }
+    .top-bar .left img { width: 24px; opacity: .85; transition: opacity .2s; }
+    .top-bar .center {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      pointer-events: none;
+    }
+    .top-bar .center img { width: 28px; }
+    .brand-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #fff;
+      white-space: nowrap;
+    }
+    .top-bar .right { display: flex; align-items: center; gap: .6rem; flex-shrink: 0; }
+    .top-bar .right a {
+      color: rgba(255,255,255,.8);
+      text-decoration: none;
+      font-size: .8rem;
+      font-weight: 500;
+    }
+    .divider { color: rgba(255,255,255,.3); }
+    
+    /* University Logos */
+    .logos {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 1.5rem;
+      padding: 1.5rem;
+      flex-wrap: wrap;
+      background: white;
+      border-bottom: 1px solid var(--border);
+    }
+    .logos img { height: 50px; width: auto; object-fit: contain; }
+    .logo-divider {
+      width: 1px;
+      height: 40px;
+      background: var(--border);
+    }
+    
+    /* Navigation Dropdowns */
+    .main-nav {
+      background: white;
+      border-bottom: 1px solid var(--border);
+      padding: 0.5rem 1rem;
+    }
+    .dropdown-container {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .dropdown { position: relative; display: inline-block; }
+    .dropbtn {
+      background: transparent;
+      border: none;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text);
+      padding: 0.6rem 0.2rem;
+      cursor: pointer;
+    }
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background: white;
+      min-width: 220px;
+      box-shadow: var(--shadow);
+      border-radius: 8px;
+      z-index: 100;
+      top: 100%;
+      left: 0;
+    }
+    .dropdown:hover .dropdown-content { display: block; }
+    .dropdown-content a {
+      color: var(--text);
+      padding: 0.6rem 1rem;
+      text-decoration: none;
+      display: block;
+      font-size: 0.8rem;
+    }
+    .dropdown-content a:hover { background: var(--accent-lt); }
+    
+    /* Hero Section */
+    .hero {
+      text-align: center;
+      padding: 2.5rem 1.5rem;
+      background: linear-gradient(135deg, #f8f6f2 0%, #fff 100%);
+    }
+    .hero-eyebrow {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--accent);
+      font-weight: 600;
+    }
+    .hero h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      margin: 0.5rem 0;
+      color: var(--text);
+    }
+    .hero-sub {
+      max-width: 600px;
+      margin: 0 auto 1.5rem;
+      color: var(--muted);
+    }
+    .search-bar {
+      display: flex;
+      max-width: 600px;
+      margin: 0 auto 1rem;
+      gap: 0.5rem;
+    }
+    .search-bar input {
+      flex: 1;
+      padding: 0.8rem 1rem;
+      border: 2px solid var(--border);
+      border-radius: 50px;
+      font-size: 1rem;
+      outline: none;
+    }
+    .search-bar button {
+      padding: 0.8rem 1.5rem;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .search-filters {
+      display: flex;
+      justify-content: center;
+      gap: 0.8rem;
+      flex-wrap: wrap;
+    }
+    .filter-chip {
+      padding: 0.4rem 1.2rem;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: all 0.2s;
+    }
+    .filter-chip.active {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+    
+    /* Stats Bar */
+    .stats-bar {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      padding: 1.5rem;
+      background: white;
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+    .stat { text-align: center; }
+    .stat .num { font-size: 1.5rem; font-weight: 800; color: var(--accent); }
+    .stat .lbl { font-size: 0.75rem; color: var(--muted); }
+    
+    /* Publications Section */
+    .publications-section {
+      max-width: 1400px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+    }
+    .pub-section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    .pub-eyebrow {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      color: var(--accent);
+      letter-spacing: 1px;
+    }
+    .pub-section-header h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+    }
+    .pub-view-all {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .pub-filter-bar {
+      display: flex;
+      gap: 0.8rem;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .pub-filter-btn {
+      padding: 0.4rem 1.2rem;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 50px;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+    .pub-filter-btn.active {
+      background: var(--accent);
+      color: white;
+    }
+    .pub-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 1.5rem;
+    }
+    .pub-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.2rem;
+      transition: all 0.2s;
+    }
+    .pub-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+    .pub-card-top { display: flex; justify-content: space-between; margin-bottom: 0.8rem; }
+    .pub-type-badge {
+      font-size: 0.7rem;
+      padding: 0.2rem 0.6rem;
+      background: var(--accent-lt);
+      border-radius: 20px;
+      color: var(--accent);
+    }
+    .pub-uni-tag { font-size: 0.7rem; color: var(--muted); }
+    .pub-card-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+    }
+    .pub-card-authors { font-size: 0.75rem; color: var(--muted); margin-bottom: 0.5rem; }
+    .pub-card-excerpt {
+      font-size: 0.8rem;
+      color: var(--text);
+      line-height: 1.4;
+      margin-bottom: 0.8rem;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .pub-card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.7rem;
+      color: var(--muted);
+    }
+    .pub-save-btn {
+      background: none;
+      border: none;
+      font-size: 1rem;
+      cursor: pointer;
+      color: var(--muted);
+    }
+    .pub-save-btn.saved { color: #f5a623; }
+    .pub-card-link {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .pub-loading, .pub-empty { text-align: center; padding: 2rem; color: var(--muted); }
+    
+    /* ============================================
+       RESPONSIVE DESIGN - All Devices
+       ============================================ */
+    
+    /* Tablet (768px - 1024px) */
+    @media (min-width: 768px) and (max-width: 1024px) {
+      .pub-grid { grid-template-columns: repeat(2, 1fr); }
+      .hero h2 { font-size: 1.8rem; }
+      .logos img { height: 45px; }
+      .dropdown-container { gap: 1rem; }
+    }
+    
+    /* Mobile Landscape (481px - 767px) */
+    @media (min-width: 481px) and (max-width: 767px) {
+      .pub-grid { grid-template-columns: 1fr; }
+      .hero h2 { font-size: 1.5rem; }
+      .search-bar { flex-direction: column; }
+      .search-bar button { width: 100%; }
+      .stats-bar { gap: 1rem; }
+      .stat .num { font-size: 1.2rem; }
+      .logos { gap: 0.8rem; }
+      .logo-divider { display: none; }
+      .dropdown-container { flex-direction: column; align-items: center; gap: 0.5rem; }
+      .dropbtn { width: 200px; background: var(--accent-lt); border-radius: 8px; padding: 0.5rem; }
+    }
+    
+    /* Mobile Portrait (up to 480px) */
+    @media (max-width: 480px) {
+      .top-bar { padding: 0 0.8rem; }
+      .brand-name { font-size: 0.8rem; }
+      .top-bar .center img { width: 22px; }
+      .top-bar .right a { font-size: 0.7rem; }
+      
+      .logos { gap: 0.5rem; padding: 1rem; }
+      .logos img { height: 35px; }
+      .logo-divider { display: none; }
+      
+      .hero { padding: 1.5rem 1rem; }
+      .hero h2 { font-size: 1.3rem; }
+      .hero-sub { font-size: 0.85rem; }
+      .search-bar { flex-direction: column; gap: 0.5rem; }
+      .search-bar input { padding: 0.6rem 1rem; }
+      .search-bar button { width: 100%; padding: 0.6rem; }
+      .filter-chip { padding: 0.3rem 1rem; font-size: 0.75rem; }
+      
+      .stats-bar { gap: 0.8rem; padding: 1rem; }
+      .stat .num { font-size: 1rem; }
+      .stat .lbl { font-size: 0.65rem; }
+      
+      .publications-section { padding: 0 1rem; margin: 1rem auto; }
+      .pub-section-header { flex-direction: column; align-items: flex-start; }
+      .pub-section-header h2 { font-size: 1.2rem; }
+      .pub-filter-bar { gap: 0.5rem; }
+      .pub-filter-btn { padding: 0.3rem 0.8rem; font-size: 0.7rem; }
+      .pub-grid { grid-template-columns: 1fr; gap: 1rem; }
+      .pub-card { padding: 1rem; }
+      .pub-card-title { font-size: 0.9rem; }
+      .pub-card-excerpt { font-size: 0.75rem; }
+    }
+  </style>
 </head>
 <body>
 
-  <!-- Top Navigation -->
-<header class="top-bar">
-  <div class="left">
-     <img src="assets/whitehomesymbol.png" width="25" alt="Home">
-  </div>
+  <header class="top-bar">
+    <div class="left"><a href="index.html"><img src="assets/whitehomesymbol.png" width="25" alt="Home"></a></div>
+    <div class="center"><img src="assets/whiteroselogo.png" width="30" alt="Logo"><span class="brand-name">White Rose Publication</span></div>
+    <div class="right"><a href="#">Login</a><span class="divider">|</span><a href="#">Create Account</a></div>
+  </header>
 
-  <div class="center">
-    <img src="assets/whiteroselogo.png" width="30" alt="Logo">
-    <h1><span class="brand-name"> White Rose Publication</span></h1>
-  </div>
-
-  <div class="right">
-    <a href="#">Login</a>
-    <span class="divider">|</span>
-    <a href="#">Create Account</a>
-  </div>
-  
-</header>
-
-  <!-- University Logos -->
   <section class="logos">
-    <img src="assets/universityofleeds.png" width="200" alt="University of Leeds">
+    <img src="assets/universityofleeds.png" alt="University of Leeds">
     <div class="logo-divider"></div>
-    <img src="assets/universityofsheffield.png" width="200" alt="University of Sheffield">
+    <img src="assets/universityofsheffield.png" alt="University of Sheffield">
     <div class="logo-divider"></div>
-    <img src="assets/universityofyork.png" width="200" alt="University of York">
+    <img src="assets/universityofyork.png" alt="University of York">
   </section>
 
-  <!-- Navigation Dropdowns -->
   <nav class="main-nav">
     <div class="dropdown-container">
-      <div class="dropdown">
-        <button class="dropbtn">Discover <span class="arrow">▼</span></button>
-        <div class="dropdown-content">
-          <a href="#">Research Statistics</a>
-          <a href="#">Restricted Items &amp; Requesting</a>
-        </div>
-      </div>
-
-      <div class="dropdown">
-        <button class="dropbtn">Research Papers <span class="arrow">▼</span></button>
-        <div class="dropdown-content">
-          <a href="#">About</a>
-          <a href="#">FAQs</a>
-          <a href="#">Copyright, Licence and Reuse Information</a>
-          <a href="#">Privacy and Data Protection</a>
-          <a href="#">Takedown Policy</a>
-          <a href="#">Information for Depositors</a>
-          <a href="#">Contact</a>
-          <a href="#">Accessibility</a>
-        </div>
-      </div>
-
-      <div class="dropdown">
-        <button class="dropbtn">E-Theses <span class="arrow">▼</span></button>
-        <div class="dropdown-content">
-          <a href="#">About</a>
-          <a href="#">Deposit</a>
-          <a href="#">FAQs</a>
-          <a href="#">Copyright and Reuse Information</a>
-          <a href="#">Privacy and Data Protection</a>
-          <a href="#">Takedown Policy</a>
-          <a href="#">Other Sources of E-Theses</a>
-          <a href="#">Contact</a>
-          <a href="#">Accessibility</a>
-        </div>
-      </div>
+      <div class="dropdown"><button class="dropbtn">Discover ▼</button><div class="dropdown-content"><a href="#">Research Statistics</a><a href="#">Restricted Items</a></div></div>
+      <div class="dropdown"><button class="dropbtn">Research Papers ▼</button><div class="dropdown-content"><a href="#">About</a><a href="#">FAQs</a><a href="#">Copyright</a><a href="#">Contact</a></div></div>
+      <div class="dropdown"><button class="dropbtn">E-Theses ▼</button><div class="dropdown-content"><a href="#">About</a><a href="#">Deposit</a><a href="#">FAQs</a><a href="#">Contact</a></div></div>
     </div>
   </nav>
 
-  <!-- Hero Section -->
   <section class="hero">
     <p class="hero-eyebrow">Open Access Research Repository</p>
     <h2>Welcome to White Rose<br>Publication</h2>
     <p class="hero-sub">Discover thousands of peer-reviewed papers, theses and research outputs from the Universities of Leeds, Sheffield and York.</p>
-
     <div class="search-bar">
       <input type="text" id="heroSearch" placeholder="Search research papers, theses, authors..." />
-      <button id="heroSearchBtn">&#128269; Search</button>
+      <button id="heroSearchBtn">🔍 Search</button>
     </div>
-
     <div class="search-filters">
       <div class="filter-chip active" data-filter="all">All</div>
       <div class="filter-chip" data-filter="article">Research Papers</div>
@@ -96,235 +423,66 @@
     </div>
   </section>
 
-  <!-- Stats Bar -->
   <div class="stats-bar">
-    <div class="stat">
-      <div class="num" id="stat-total">—</div>
-      <div class="lbl">Publications</div>
-    </div>
-    <div class="stat">
-      <div class="num" id="stat-unis">3</div>
-      <div class="lbl">Universities</div>
-    </div>
-    <div class="stat">
-      <div class="num" id="stat-papers">~40</div>
-      <div class="lbl">Papers/Working Day</div>
-    </div>
-    <div class="stat">
-      <div class="num" id="stat-theses">~2-3</div>
-      <div class="lbl">Theses/Working Day</div>
-    </div>
+    <div class="stat"><div class="num" id="stat-total">—</div><div class="lbl">Publications</div></div>
+    <div class="stat"><div class="num" id="stat-unis">3</div><div class="lbl">Universities</div></div>
+    <div class="stat"><div class="num" id="stat-papers">~40</div><div class="lbl">Papers/Day</div></div>
+    <div class="stat"><div class="num" id="stat-theses">~2-3</div><div class="lbl">Theses/Day</div></div>
   </div>
 
-  <!-- Recent Publications -->
-  <section class="publications-section" aria-label="Recent Publications">
-
+  <section class="publications-section">
     <div class="pub-section-header">
-      <div class="pub-section-left">
-        <p class="pub-eyebrow">Open Access Repository</p>
-        <h2>Recent Publications</h2>
-      </div>
+      <div><p class="pub-eyebrow">Open Access Repository</p><h2>Recent Publications</h2></div>
       <a href="result.html" class="pub-view-all">View all publications →</a>
     </div>
-
-    <!-- Simplified filter buttons: All, Research Papers, E-Theses only -->
-    <div class="pub-filter-bar" role="group" aria-label="Filter by type">
+    <div class="pub-filter-bar">
       <button class="pub-filter-btn active" data-filter="all">All</button>
       <button class="pub-filter-btn" data-filter="article">Research Papers</button>
       <button class="pub-filter-btn" data-filter="thesis">E-Theses</button>
     </div>
-
-    <div class="pub-grid" id="pubGrid">
-      <div class="pub-loading">Loading publications…</div>
-    </div>
-
+    <div class="pub-grid" id="pubGrid"><div class="pub-loading">Loading publications…</div></div>
   </section>
 
   <script>
-    const API = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-      ? 'http://localhost:5000'
-      : window.location.origin;
-
-    // ── SAVE / BOOKMARK FUNCTIONALITY ─────────────────────────────────────────
-    function getSaved() {
-      try { return JSON.parse(localStorage.getItem('wrp_saved') || '[]'); }
-      catch { return []; }
-    }
-
-    function setSaved(arr) {
-      localStorage.setItem('wrp_saved', JSON.stringify(arr));
-    }
-
+    const API = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:5000' : window.location.origin;
+    
+    function getSaved() { try { return JSON.parse(localStorage.getItem('wrp_saved') || '[]'); } catch { return []; } }
+    function setSaved(arr) { localStorage.setItem('wrp_saved', JSON.stringify(arr)); }
     function toggleSave(btn, id) {
       let saved = getSaved();
       const isSaved = saved.includes(id);
-      if (isSaved) {
-        saved = saved.filter(s => s !== id);
-        btn.textContent = '☆';
-        btn.title = 'Save';
-        btn.classList.remove('saved');
-      } else {
-        saved.push(id);
-        btn.textContent = '★';
-        btn.title = 'Saved';
-        btn.classList.add('saved');
-      }
+      if (isSaved) { saved = saved.filter(s => s !== id); btn.textContent = '☆'; btn.classList.remove('saved'); }
+      else { saved.push(id); btn.textContent = '★'; btn.classList.add('saved'); }
       setSaved(saved);
     }
 
-    // ── STATS BAR ─────────────────────────────────────────────────────────────
-    fetch(`${API}/api/stats`)
-      .then(r => { if (!r.ok) throw new Error(); return r.json(); })
-      .then(data => {
-        document.getElementById('stat-total').textContent =
-          Number(data.total).toLocaleString() + '+';
-      })
-      .catch(() => { document.getElementById('stat-total').textContent = '—'; });
+    fetch(`${API}/api/stats`).then(r => r.json()).then(data => { document.getElementById('stat-total').textContent = Number(data.total).toLocaleString() + '+'; }).catch(() => {});
 
-    // ── PUBLICATIONS GRID ─────────────────────────────────────────────────────
     let currentFilter = 'all';
     let allRecent = [];
 
-    function uniClass(inst) {
-      if (!inst) return '';
-      if (inst.includes('Leeds'))     return 'leeds';
-      if (inst.includes('Sheffield')) return 'sheffield';
-      if (inst.includes('York'))      return 'york';
-      return '';
-    }
-
-    function typeLabel(type) {
-      const map = { 
-        article: 'Journal Article',
-        thesis: 'Thesis',
-        report: 'Report', 
-        dataset: 'Dataset'
-      };
-      return map[type] || 'Publication';
-    }
-
-    function calIcon() {
-      return `<svg width="12" height="12" viewBox="0 0 24 24" fill="none"
-               stroke="currentColor" stroke-width="2">
-               <rect x="3" y="4" width="18" height="18" rx="2"/>
-               <line x1="16" y1="2" x2="16" y2="6"/>
-               <line x1="8" y1="2" x2="8" y2="6"/>
-               <line x1="3" y1="10" x2="21" y2="10"/>
-             </svg>`;
-    }
-
     function renderCard(pub) {
-      const saved   = getSaved();
-      const pubId   = (pub.id || pub.title || '').replace(/'/g, "\\'");
+      const saved = getSaved();
       const isSaved = saved.includes(pub.id || pub.title);
-      const uniTag  = pub.institution
-        ? `<span class="pub-uni-tag ${uniClass(pub.institution)}">${pub.institution}</span>`
-        : '';
-      const dateStr = pub.date_display || pub.date_raw || '';
-      const link    = pub.url || pub.doi || '#';
-
-      return `
-        <article class="pub-card" data-type="${pub.type}" tabindex="0">
-          <div class="pub-card-top">
-            <span class="pub-type-badge ${pub.type}">${typeLabel(pub.type)}</span> ${uniTag}
-          </div>
-          <h3 class="pub-card-title">${pub.title || '(Untitled)'}</h3>
-          ${pub.authors
-            ? `<p class="pub-card-authors"><span class="lead-author">${pub.authors}</span></p>`
-            : ''}
-          ${pub.description
-            ? `<p class="pub-card-excerpt">${pub.description}</p>`
-            : ''}
-          <div class="pub-card-footer">
-            <span class="pub-card-date">
-              <button
-                class="pub-save-btn ${isSaved ? 'saved' : ''}"
-                title="${isSaved ? 'Saved' : 'Save'}"
-                onclick="toggleSave(this, '${pubId}')">
-                ${isSaved ? '★' : '☆'}
-              </button>
-              ${calIcon()} ${dateStr}
-            </span>
-            <a href="${link}" target="_blank" rel="noopener" class="pub-card-link">Read more →</a>
-          </div>
-        </article>`;
+      return `<article class="pub-card"><div class="pub-card-top"><span class="pub-type-badge">${pub.type === 'article' ? 'Journal Article' : pub.type === 'thesis' ? 'Thesis' : 'Publication'}</span><span class="pub-uni-tag">${pub.institution || ''}</span></div><h3 class="pub-card-title">${pub.title || 'Untitled'}</h3>${pub.authors ? `<p class="pub-card-authors">${pub.authors}</p>` : ''}${pub.description ? `<p class="pub-card-excerpt">${pub.description}</p>` : ''}<div class="pub-card-footer"><span><button class="pub-save-btn ${isSaved ? 'saved' : ''}" onclick="toggleSave(this, '${(pub.id || pub.title).replace(/'/g, "\\'")}')">${isSaved ? '★' : '☆'}</button> 📅 ${pub.date_display || ''}</span><a href="${pub.url || '#'}" target="_blank" class="pub-card-link">Read more →</a></div></article>`;
     }
 
     function renderGrid(filter) {
       const grid = document.getElementById('pubGrid');
-      const pubs = filter === 'all'
-        ? allRecent
-        : allRecent.filter(p => p.type === filter);
-      if (!pubs.length) {
-        grid.innerHTML = '<div class="pub-empty">No publications found for this filter.</div>';
-        return;
-      }
+      const pubs = filter === 'all' ? allRecent : allRecent.filter(p => p.type === filter);
+      if (!pubs.length) { grid.innerHTML = '<div class="pub-empty">No publications found.</div>'; return; }
       grid.innerHTML = pubs.map(renderCard).join('');
     }
 
-    function showServerError() {
-      document.getElementById('pubGrid').innerHTML = `
-        <div class="pub-empty" style="display:block; background:#fff8f0; border:1px solid #f5c842;
-             border-radius:8px; padding:32px; color:#7a5200; max-width:600px; margin:0 auto; text-align:left;">
-          <strong style="font-size:1rem; display:block; margin-bottom:12px;">
-            ⚠️ Cannot connect to the Flask server
-          </strong>
-          <p style="margin-bottom:12px; font-size:0.9rem; line-height:1.6;">
-            The frontend is working, but it can't reach the API at
-            <code style="background:#f0e0c0; padding:2px 6px; border-radius:4px;">${API}</code>.
-          </p>
-          <p style="font-size:0.88rem; color:#555; margin-bottom:8px;"><strong>To fix this, open a terminal and run:</strong></p>
-          <code style="display:block; background:#1a1a1a; color:#7ec8a4; padding:12px 16px;
-                border-radius:6px; font-size:0.88rem; margin-bottom:12px;">python app.py</code>
-          <p style="font-size:0.82rem; color:#888; line-height:1.6;">
-            Make sure you are in the correct folder and that
-            <code style="background:#f0e0c0; padding:1px 5px; border-radius:3px;">flask</code> and
-            <code style="background:#f0e0c0; padding:1px 5px; border-radius:3px;">flask-cors</code>
-            are installed (<code style="background:#f0e0c0; padding:1px 5px; border-radius:3px;">pip install flask flask-cors</code>).
-            Then refresh this page.
-          </p>
-        </div>`;
-    }
+    fetch(`${API}/api/recent?limit=12`).then(r => r.json()).then(data => { allRecent = data; renderGrid(currentFilter); }).catch(() => { document.getElementById('pubGrid').innerHTML = '<div class="pub-empty">⚠️ Cannot connect to server. Make sure Flask is running.</div>'; });
 
-    fetch(`${API}/api/recent?limit=12`)
-      .then(r => { if (!r.ok) throw new Error(); return r.json(); })
-      .then(data => { allRecent = data; renderGrid(currentFilter); })
-      .catch(() => { showServerError(); });
+    document.querySelectorAll('.pub-filter-btn').forEach(btn => { btn.addEventListener('click', () => { document.querySelectorAll('.pub-filter-btn').forEach(b => b.classList.remove('active')); btn.classList.add('active'); currentFilter = btn.dataset.filter; renderGrid(currentFilter); }); });
 
-    // Filter buttons - now only 3 buttons: All, Research Papers, E-Theses
-    document.querySelectorAll('.pub-filter-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.pub-filter-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        currentFilter = btn.dataset.filter;
-        renderGrid(currentFilter);
-      });
-    });
-
-    // ── HERO SEARCH ───────────────────────────────────────────────────────────
     let heroFilterType = 'all';
-
-    document.querySelectorAll('.search-filters .filter-chip').forEach(chip => {
-      chip.addEventListener('click', () => {
-        document.querySelectorAll('.search-filters .filter-chip')
-          .forEach(c => c.classList.remove('active'));
-        chip.classList.add('active');
-        heroFilterType = chip.dataset.filter;
-      });
-    });
-
-    function doSearch() {
-      const q      = document.getElementById('heroSearch').value.trim();
-      const type   = heroFilterType;
-      const params = new URLSearchParams({ q, type, page: 1 });
-      window.location.href = `result.html?${params.toString()}`;
-    }
-
+    document.querySelectorAll('.search-filters .filter-chip').forEach(chip => { chip.addEventListener('click', () => { document.querySelectorAll('.search-filters .filter-chip').forEach(c => c.classList.remove('active')); chip.classList.add('active'); heroFilterType = chip.dataset.filter; }); });
+    function doSearch() { const q = document.getElementById('heroSearch').value.trim(); window.location.href = `result.html?q=${encodeURIComponent(q)}&type=${heroFilterType}&page=1`; }
     document.getElementById('heroSearchBtn').addEventListener('click', doSearch);
-    document.getElementById('heroSearch').addEventListener('keydown', e => {
-      if (e.key === 'Enter') doSearch();
-    });
+    document.getElementById('heroSearch').addEventListener('keydown', e => { if (e.key === 'Enter') doSearch(); });
   </script>
-
 </body>
 </html>
