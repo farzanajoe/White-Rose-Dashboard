@@ -4,20 +4,19 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>White Rose Publication</title>
-  <link rel="stylesheet" href="../static/styles.css" />
+  <link rel="stylesheet" href="static/styles.css" />
 </head>
 <body>
 
   <!-- Top Navigation -->
 <header class="top-bar">
   <div class="left">
-     <img src="assets/whitehomesymbol.png" width="25">
-    </a>
+     <img src="assets/whitehomesymbol.png" width="25" alt="Home">
   </div>
 
   <div class="center">
-    <img src="assets/whiteroselogo.png" width="30">
-    <h1><span class="brand-name"> White Rose Publication</h1>
+    <img src="assets/whiteroselogo.png" width="30" alt="Logo">
+    <h1><span class="brand-name"> White Rose Publication</span></h1>
   </div>
 
   <div class="right">
@@ -30,11 +29,11 @@
 
   <!-- University Logos -->
   <section class="logos">
-    <img src="assets/universityofleeds.png" width="200">
+    <img src="assets/universityofleeds.png" width="200" alt="University of Leeds">
     <div class="logo-divider"></div>
-    <img src="assets/universityofsheffield.png" width="200">
+    <img src="assets/universityofsheffield.png" width="200" alt="University of Sheffield">
     <div class="logo-divider"></div>
-    <img src="assets/universityofyork.png" width="200">
+    <img src="assets/universityofyork.png" width="200" alt="University of York">
   </section>
 
   <!-- Navigation Dropdowns -->
@@ -128,12 +127,11 @@
       <a href="result.html" class="pub-view-all">View all publications →</a>
     </div>
 
+    <!-- Simplified filter buttons: All, Research Papers, E-Theses only -->
     <div class="pub-filter-bar" role="group" aria-label="Filter by type">
       <button class="pub-filter-btn active" data-filter="all">All</button>
-      <button class="pub-filter-btn" data-filter="article">Journal Articles</button>
-      <button class="pub-filter-btn" data-filter="thesis">Theses</button>
-      <button class="pub-filter-btn" data-filter="report">Reports</button>
-      <button class="pub-filter-btn" data-filter="dataset">Datasets</button>
+      <button class="pub-filter-btn" data-filter="article">Research Papers</button>
+      <button class="pub-filter-btn" data-filter="thesis">E-Theses</button>
     </div>
 
     <div class="pub-grid" id="pubGrid">
@@ -144,8 +142,8 @@
 
   <script>
     const API = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-  ? 'http://localhost:5000'
-  : window.location.origin;
+      ? 'http://localhost:5000'
+      : window.location.origin;
 
     // ── SAVE / BOOKMARK FUNCTIONALITY ─────────────────────────────────────────
     function getSaved() {
@@ -196,8 +194,12 @@
     }
 
     function typeLabel(type) {
-      const map = { article: 'Journal Article', thesis: 'Thesis',
-                    report: 'Report', dataset: 'Dataset' };
+      const map = { 
+        article: 'Journal Article',
+        thesis: 'Thesis',
+        report: 'Report', 
+        dataset: 'Dataset'
+      };
       return map[type] || 'Publication';
     }
 
@@ -289,7 +291,7 @@
       .then(data => { allRecent = data; renderGrid(currentFilter); })
       .catch(() => { showServerError(); });
 
-    // Filter buttons
+    // Filter buttons - now only 3 buttons: All, Research Papers, E-Theses
     document.querySelectorAll('.pub-filter-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         document.querySelectorAll('.pub-filter-btn').forEach(b => b.classList.remove('active'));
