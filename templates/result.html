@@ -16,7 +16,6 @@
     }
     body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; font-size: 15px; }
 
-    /* ── top bar ── */
     .topbar {
       background: var(--accent); color: #fff; padding: 0 2rem;
       display: flex; align-items: center; gap: 2rem; height: 64px;
@@ -37,15 +36,12 @@
     .toggle-group .toggle { padding: .45rem .85rem; background: transparent; border: none; color: rgba(255,255,255,.65); font-family: 'DM Sans', sans-serif; font-size: .82rem; font-weight: 500; cursor: pointer; transition: background .18s, color .18s; }
     .toggle-group .toggle.active { background: rgba(255,255,255,.2); color: #fff; }
 
-    /* ── results header ── */
     .results-header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 1.2rem 2rem; display: flex; align-items: baseline; gap: 1rem; flex-wrap: wrap; }
     .results-header h2 { font-family: 'Playfair Display', serif; font-size: 1.45rem; font-weight: 600; }
     .results-header .count { font-size: .85rem; color: var(--muted); background: var(--tag-bg); padding: .22rem .65rem; border-radius: 20px; font-weight: 500; }
 
-    /* ── layout ── */
     .container { display: grid; grid-template-columns: 240px 1fr; gap: 1.5rem; max-width: 1200px; margin: 1.5rem auto; padding: 0 1.5rem; }
 
-    /* ── sidebar filters ── */
     .filters { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.4rem; height: fit-content; position: sticky; top: 80px; box-shadow: var(--shadow); }
     .filters h3 { font-family: 'Playfair Display', serif; font-size: 1rem; font-weight: 600; margin-bottom: 1.2rem; padding-bottom: .7rem; border-bottom: 1px solid var(--border); }
     .filter-group { margin-bottom: 1.3rem; }
@@ -58,7 +54,6 @@
     .btn-reset { width: 100%; padding: .48rem; border-radius: 6px; border: 1.5px solid var(--border); background: transparent; color: var(--muted); font-family: 'DM Sans', sans-serif; font-size: .82rem; cursor: pointer; transition: border-color .18s, color .18s; margin-top: .5rem; }
     .btn-reset:hover { border-color: var(--accent); color: var(--accent); }
 
-    /* ── year slider ── */
     .year-slider-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: .7rem; }
     .year-display { font-size: .88rem; font-weight: 600; color: var(--accent); background: var(--accent-lt); padding: .18rem .6rem; border-radius: 20px; }
     .slider-track-wrap { position: relative; height: 20px; display: flex; align-items: center; }
@@ -70,14 +65,14 @@
     input[type="range"]:active::-webkit-slider-thumb { cursor: grabbing; transform: scale(1.15); }
     .range-labels { display: flex; justify-content: space-between; font-size: .72rem; color: var(--muted); margin-top: .35rem; }
 
-    /* ── results area ── */
     .results { min-width: 0; }
     .sort-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; flex-wrap: wrap; gap: .6rem; }
     .sort-bar-left { display: flex; align-items: center; gap: .6rem; font-size: .85rem; color: var(--muted); }
     .sort-bar select { padding: .38rem .7rem; border-radius: 6px; border: 1.5px solid var(--border); background: var(--surface); font-family: 'DM Sans', sans-serif; font-size: .85rem; color: var(--text); cursor: pointer; outline: none; }
 
-    /* ── cards ── */
     .cards { display: flex; flex-direction: column; gap: 1rem; }
+
+    /* ── card layout ── */
     .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.4rem 1.5rem; display: grid; grid-template-columns: 1fr auto; gap: .5rem 1rem; box-shadow: var(--shadow); transition: box-shadow .2s, transform .2s, border-color .2s; cursor: pointer; position: relative; overflow: hidden; }
     .card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; border-radius: 10px 0 0 10px; background: var(--paper); }
     .card.thesis::before { background: var(--thesis); }
@@ -95,25 +90,31 @@
     .card-meta { font-size: .82rem; color: var(--muted); margin-bottom: .55rem; }
     .card-meta strong { color: var(--text); font-weight: 500; }
     .card p.desc { font-size: .88rem; color: #4a4540; line-height: 1.6; margin-bottom: .75rem; }
-    .card-actions { display: flex; flex-direction: column; align-items: flex-end; justify-content: space-between; gap: .5rem; grid-row: 1 / 3; }
+
+    /* ── card actions: View top-right, star bottom-left ── */
+    .card-actions { display: flex; flex-direction: column; align-items: flex-end; justify-content: flex-start; gap: .5rem; grid-row: 1 / 3; }
     .view-link { display: inline-flex; align-items: center; gap: .3rem; font-size: .82rem; font-weight: 600; color: var(--accent); text-decoration: none; padding: .4rem .8rem; border-radius: 6px; border: 1.5px solid var(--accent-lt); transition: background .18s; white-space: nowrap; }
     .card.thesis .view-link { color: var(--thesis); border-color: #e8dff5; }
     .view-link:hover { background: var(--accent-lt); }
     .card.thesis .view-link:hover { background: #f0ebf8; }
 
-    /* ── error banner ── */
-    .server-error {
-      background: #fff8f0; border: 1px solid #f5c842; border-radius: 8px;
-      padding: 28px 32px; color: #7a5200; line-height: 1.6;
+    /* ── star save button ── */
+    .card-footer { display: flex; align-items: center; gap: .4rem; margin-top: .4rem; }
+    .save-btn {
+      background: none; border: none; cursor: pointer;
+      font-size: 1.1rem; padding: 0; line-height: 1;
+      color: var(--muted); transition: color .15s, transform .15s;
     }
+    .save-btn:hover { transform: scale(1.2); }
+    .save-btn.saved { color: #f5a623; }
+
+    .server-error { background: #fff8f0; border: 1px solid #f5c842; border-radius: 8px; padding: 28px 32px; color: #7a5200; line-height: 1.6; }
     .server-error strong { display: block; font-size: 1rem; margin-bottom: 10px; }
     .server-error code { background: #f0e0c0; padding: 2px 6px; border-radius: 4px; font-size: .9em; }
     .server-error .cmd { display: block; background: #1a1a1a; color: #7ec8a4; padding: 10px 16px; border-radius: 6px; font-size: .88rem; margin: 10px 0; }
 
-    /* ── empty / loading ── */
     .empty-state { text-align: center; padding: 3rem 1rem; color: var(--muted); font-size: .95rem; }
 
-    /* ── pagination ── */
     .pagination { display: flex; align-items: center; justify-content: center; gap: .4rem; margin-top: 2rem; padding-bottom: 2rem; }
     .page-btn { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 6px; border: 1.5px solid var(--border); background: var(--surface); font-family: 'DM Sans', sans-serif; font-size: .85rem; font-weight: 500; color: var(--muted); cursor: pointer; transition: all .18s; }
     .page-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-lt); }
@@ -214,11 +215,34 @@
 </div>
 
 <script>
-  // ── CONFIG ─────────────────────────────────────────────────────────────────
-  // Change this if your Flask server runs on a different port
   const API = 'http://localhost:5000';
 
-  // ── state ──────────────────────────────────────────────────────────────────
+  // ── SAVE / BOOKMARK ────────────────────────────────────────────────────────
+  function getSaved() {
+    try { return JSON.parse(localStorage.getItem('wrp_saved') || '[]'); }
+    catch { return []; }
+  }
+  function setSaved(arr) {
+    localStorage.setItem('wrp_saved', JSON.stringify(arr));
+  }
+  function toggleSave(btn, id) {
+    let saved = getSaved();
+    const isSaved = saved.includes(id);
+    if (isSaved) {
+      saved = saved.filter(s => s !== id);
+      btn.textContent = '☆';
+      btn.title = 'Save';
+      btn.classList.remove('saved');
+    } else {
+      saved.push(id);
+      btn.textContent = '★';
+      btn.title = 'Saved';
+      btn.classList.add('saved');
+    }
+    setSaved(saved);
+  }
+
+  // ── STATE ──────────────────────────────────────────────────────────────────
   const params = new URLSearchParams(location.search);
   let state = {
     q:            params.get('q')    || '',
@@ -230,7 +254,6 @@
     peerOnly:     false,
   };
 
-  // ── init UI from state ─────────────────────────────────────────────────────
   document.getElementById('topSearch').value = state.q;
 
   document.querySelectorAll('.toggle-group .toggle').forEach(btn => {
@@ -244,7 +267,7 @@
     });
   });
 
-  // ── helpers ────────────────────────────────────────────────────────────────
+  // ── HELPERS ────────────────────────────────────────────────────────────────
   function typeLabel(t) {
     return { article:'Paper', thesis:'Thesis', report:'Report', dataset:'Dataset' }[t] || 'Publication';
   }
@@ -253,15 +276,18 @@
   }
 
   function buildCard(pub) {
-    const year = pub.date ? pub.date.slice(0, 4) : '';
-    // Prefer DOI link, then URL, fall back to '#'
-    const href = (pub.doi && pub.doi !== 'None' && pub.doi.trim())
+    const year    = pub.date ? pub.date.slice(0, 4) : '';
+    const href    = (pub.doi && pub.doi !== 'None' && pub.doi.trim())
       ? (pub.doi.startsWith('http') ? pub.doi : 'https://doi.org/' + pub.doi)
       : (pub.url && pub.url !== 'None' && pub.url.trim() ? pub.url : '#');
     const safeHref = href.replace(/'/g, "\\'");
-    const instTag = pub.institution
+    const pubId    = (pub.id || pub.title || '').replace(/'/g, "\\'");
+    const saved    = getSaved();
+    const isSaved  = saved.includes(pub.id || pub.title);
+    const instTag  = pub.institution
       ? `<span style="font-size:.75rem;color:var(--muted)">${pub.institution}</span>`
       : '';
+
     return `
       <div class="card ${pub.type}" onclick="window.open('${safeHref}','_blank')">
         <div class="card-main">
@@ -277,6 +303,14 @@
           ${pub.description
             ? `<p class="desc">${pub.description}</p>`
             : ''}
+          <div class="card-footer">
+            <button
+              class="save-btn ${isSaved ? 'saved' : ''}"
+              title="${isSaved ? 'Saved' : 'Save'}"
+              onclick="event.stopPropagation(); toggleSave(this, '${pubId}')">
+              ${isSaved ? '★' : '☆'}
+            </button>
+          </div>
         </div>
         <div class="card-actions">
           <a href="${safeHref}" target="_blank" rel="noopener"
@@ -300,7 +334,7 @@
     document.getElementById('resultCount').textContent = 'Server offline';
   }
 
-  // ── fetch & render ─────────────────────────────────────────────────────────
+  // ── FETCH & RENDER ─────────────────────────────────────────────────────────
   function loadResults() {
     const qs = new URLSearchParams({
       q:        state.q,
@@ -315,12 +349,8 @@
     document.getElementById('pagination').innerHTML = '';
 
     fetch(`${API}/api/search?${qs}`)
-      .then(r => {
-        if (!r.ok) throw new Error(`HTTP ${r.status}`);
-        return r.json();
-      })
+      .then(r => { if (!r.ok) throw new Error(`HTTP ${r.status}`); return r.json(); })
       .then(data => {
-        // client-side filters (year, institution, peer-reviewed)
         let results = data.results.filter(p => {
           const yr = p.date ? parseInt(p.date.slice(0,4)) : 0;
           if (yr && yr < state.fromYear) return false;
@@ -347,9 +377,7 @@
 
         renderPagination(data.page, data.pages);
       })
-      .catch(() => {
-        showServerError();
-      });
+      .catch(() => { showServerError(); });
   }
 
   function renderPagination(current, total) {
@@ -357,13 +385,11 @@
     if (total <= 1) { nav.innerHTML = ''; return; }
 
     let html = `<button class="page-btn" ${current===1?'disabled':''} data-page="${current-1}">‹</button>`;
-
     const pages = [];
     for (let i = 1; i <= total; i++) {
       if (i===1 || i===total || Math.abs(i-current)<=2) pages.push(i);
       else if (pages[pages.length-1] !== '…') pages.push('…');
     }
-
     pages.forEach(p => {
       if (p === '…') {
         html += `<span style="color:var(--muted);padding:0 .3rem">…</span>`;
@@ -371,7 +397,6 @@
         html += `<button class="page-btn ${p===current?'active':''}" data-page="${p}">${p}</button>`;
       }
     });
-
     html += `<button class="page-btn" ${current===total?'disabled':''} data-page="${current+1}">›</button>`;
     nav.innerHTML = html;
 
@@ -384,27 +409,20 @@
     });
   }
 
-  // ── event wiring ────────────────────────────────────────────────────────────
+  // ── EVENT WIRING ──────────────────────────────────────────────────────────
   document.getElementById('topSearchBtn').addEventListener('click', () => {
     state.q    = document.getElementById('topSearch').value.trim();
     state.page = 1;
     loadResults();
   });
   document.getElementById('topSearch').addEventListener('keydown', e => {
-    if (e.key === 'Enter') {
-      state.q = e.target.value.trim();
-      state.page = 1;
-      loadResults();
-    }
+    if (e.key === 'Enter') { state.q = e.target.value.trim(); state.page = 1; loadResults(); }
   });
 
   document.getElementById('sortSelect').addEventListener('change', e => {
-    state.sort = e.target.value;
-    state.page = 1;
-    loadResults();
+    state.sort = e.target.value; state.page = 1; loadResults();
   });
 
-  // year slider
   const slider  = document.getElementById('yearSlider');
   const display = document.getElementById('yearDisplay');
   const fill    = document.getElementById('sliderFill');
@@ -417,28 +435,20 @@
   slider.addEventListener('input', () => { updateSlider(); loadResults(); });
   updateSlider();
 
-  // institution checkboxes
   document.querySelectorAll('.inst-filter').forEach(cb => {
     cb.addEventListener('change', () => {
-      state.institutions = [...document.querySelectorAll('.inst-filter:checked')]
-                            .map(c => c.value);
+      state.institutions = [...document.querySelectorAll('.inst-filter:checked')].map(c => c.value);
       state.page = 1;
       loadResults();
     });
   });
 
-  // peer-reviewed toggle
   document.getElementById('peerReviewedOnly').addEventListener('change', e => {
-    state.peerOnly = e.target.checked;
-    state.page = 1;
-    loadResults();
+    state.peerOnly = e.target.checked; state.page = 1; loadResults();
   });
 
-  // reset filters
   document.getElementById('resetFilters').addEventListener('click', () => {
-    state.fromYear = 1990;
-    state.institutions = ['Leeds','Sheffield','York'];
-    state.peerOnly = false;
+    state.fromYear = 1990; state.institutions = ['Leeds','Sheffield','York']; state.peerOnly = false;
     slider.value = 1990; updateSlider();
     document.querySelectorAll('.inst-filter').forEach(c => c.checked = true);
     document.getElementById('peerReviewedOnly').checked = false;
@@ -446,7 +456,6 @@
     loadResults();
   });
 
-  // initial load
   loadResults();
 </script>
 </body>

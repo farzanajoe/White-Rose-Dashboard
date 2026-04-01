@@ -49,29 +49,29 @@
       </div>
 
       <div class="dropdown">
-        <button class="dropbtn">Research Online <span class="arrow">▼</span></button>
+        <button class="dropbtn">Research Papers <span class="arrow">▼</span></button>
         <div class="dropdown-content">
           <a href="#">About</a>
           <a href="#">FAQs</a>
           <a href="#">Copyright, Licence and Reuse Information</a>
-          <a href="#">Privacy and data protection</a>
-          <a href="#">Takedown policy</a>
-          <a href="#">Information for depositors</a>
+          <a href="#">Privacy and Data Protection</a>
+          <a href="#">Takedown Policy</a>
+          <a href="#">Information for Depositors</a>
           <a href="#">Contact</a>
           <a href="#">Accessibility</a>
         </div>
       </div>
 
       <div class="dropdown">
-        <button class="dropbtn">E-Thesis Online <span class="arrow">▼</span></button>
+        <button class="dropbtn">E-Theses <span class="arrow">▼</span></button>
         <div class="dropdown-content">
           <a href="#">About</a>
           <a href="#">Deposit</a>
           <a href="#">FAQs</a>
           <a href="#">Copyright and Reuse Information</a>
-          <a href="#">Privacy and data protection</a>
-          <a href="#">Takedown policy</a>
-          <a href="#">Other sources of theses</a>
+          <a href="#">Privacy and Data Protection</a>
+          <a href="#">Takedown Policy</a>
+          <a href="#">Other Sources of E-Theses</a>
           <a href="#">Contact</a>
           <a href="#">Accessibility</a>
         </div>
@@ -86,7 +86,7 @@
     <p class="hero-sub">Discover thousands of peer-reviewed papers, theses and research outputs from the Universities of Leeds, Sheffield and York.</p>
 
     <div class="search-bar">
-      <input type="text" id="heroSearch" placeholder="Search papers, theses, authors..." />
+      <input type="text" id="heroSearch" placeholder="Search research papers, theses, authors..." />
       <button id="heroSearchBtn">&#128269; Search</button>
     </div>
 
@@ -97,7 +97,7 @@
     </div>
   </section>
 
-  <!-- Stats Bar (populated by API) -->
+  <!-- Stats Bar -->
   <div class="stats-bar">
     <div class="stat">
       <div class="num" id="stat-total">—</div>
@@ -136,7 +136,6 @@
       <button class="pub-filter-btn" data-filter="dataset">Datasets</button>
     </div>
 
-    <!-- Cards grid – populated by JS -->
     <div class="pub-grid" id="pubGrid">
       <div class="pub-loading">Loading publications…</div>
     </div>
@@ -144,25 +143,45 @@
   </section>
 
   <script>
-    // ── CONFIG ────────────────────────────────────────────────────────────────
-    // Change this if your Flask server runs on a different port
     const API = 'http://localhost:5000';
 
-    // ── stats bar ─────────────────────────────────────────────────────────────
+    // ── SAVE / BOOKMARK FUNCTIONALITY ─────────────────────────────────────────
+    function getSaved() {
+      try { return JSON.parse(localStorage.getItem('wrp_saved') || '[]'); }
+      catch { return []; }
+    }
+
+    function setSaved(arr) {
+      localStorage.setItem('wrp_saved', JSON.stringify(arr));
+    }
+
+    function toggleSave(btn, id) {
+      let saved = getSaved();
+      const isSaved = saved.includes(id);
+      if (isSaved) {
+        saved = saved.filter(s => s !== id);
+        btn.textContent = '☆';
+        btn.title = 'Save';
+        btn.classList.remove('saved');
+      } else {
+        saved.push(id);
+        btn.textContent = '★';
+        btn.title = 'Saved';
+        btn.classList.add('saved');
+      }
+      setSaved(saved);
+    }
+
+    // ── STATS BAR ─────────────────────────────────────────────────────────────
     fetch(`${API}/api/stats`)
-      .then(r => {
-        if (!r.ok) throw new Error(`HTTP ${r.status}`);
-        return r.json();
-      })
+      .then(r => { if (!r.ok) throw new Error(); return r.json(); })
       .then(data => {
         document.getElementById('stat-total').textContent =
           Number(data.total).toLocaleString() + '+';
       })
-      .catch(() => {
-        document.getElementById('stat-total').textContent = '—';
-      });
+      .catch(() => { document.getElementById('stat-total').textContent = '—'; });
 
-    // ── recent publications grid ──────────────────────────────────────────────
+    // ── PUBLICATIONS GRID ─────────────────────────────────────────────────────
     let currentFilter = 'all';
     let allRecent = [];
 
@@ -191,16 +210,19 @@
     }
 
     function renderCard(pub) {
+      const saved   = getSaved();
+      const pubId   = (pub.id || pub.title || '').replace(/'/g, "\\'");
+      const isSaved = saved.includes(pub.id || pub.title);
       const uniTag  = pub.institution
         ? `<span class="pub-uni-tag ${uniClass(pub.institution)}">${pub.institution}</span>`
         : '';
       const dateStr = pub.date_display || pub.date_raw || '';
       const link    = pub.url || pub.doi || '#';
+
       return `
         <article class="pub-card" data-type="${pub.type}" tabindex="0">
           <div class="pub-card-top">
-            <span class="pub-type-badge ${pub.type}">${typeLabel(pub.type)}</span>
-            ${uniTag}
+            <span class="pub-type-badge ${pub.type}">${typeLabel(pub.type)}</span> ${uniTag}
           </div>
           <h3 class="pub-card-title">${pub.title || '(Untitled)'}</h3>
           ${pub.authors
@@ -210,7 +232,15 @@
             ? `<p class="pub-card-excerpt">${pub.description}</p>`
             : ''}
           <div class="pub-card-footer">
-            <span class="pub-card-date">${calIcon()} ${dateStr}</span>
+            <span class="pub-card-date">
+              <button
+                class="pub-save-btn ${isSaved ? 'saved' : ''}"
+                title="${isSaved ? 'Saved' : 'Save'}"
+                onclick="toggleSave(this, '${pubId}')">
+                ${isSaved ? '★' : '☆'}
+              </button>
+              ${calIcon()} ${dateStr}
+            </span>
             <a href="${link}" target="_blank" rel="noopener" class="pub-card-link">Read more →</a>
           </div>
         </article>`;
@@ -221,7 +251,6 @@
       const pubs = filter === 'all'
         ? allRecent
         : allRecent.filter(p => p.type === filter);
-
       if (!pubs.length) {
         grid.innerHTML = '<div class="pub-empty">No publications found for this filter.</div>';
         return;
@@ -253,21 +282,12 @@
         </div>`;
     }
 
-    // Load 12 recent items so filters have something to show
     fetch(`${API}/api/recent?limit=12`)
-      .then(r => {
-        if (!r.ok) throw new Error(`HTTP ${r.status}`);
-        return r.json();
-      })
-      .then(data => {
-        allRecent = data;
-        renderGrid(currentFilter);
-      })
-      .catch(() => {
-        showServerError();
-      });
+      .then(r => { if (!r.ok) throw new Error(); return r.json(); })
+      .then(data => { allRecent = data; renderGrid(currentFilter); })
+      .catch(() => { showServerError(); });
 
-    // Filter pills
+    // Filter buttons
     document.querySelectorAll('.pub-filter-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         document.querySelectorAll('.pub-filter-btn').forEach(b => b.classList.remove('active'));
@@ -277,7 +297,7 @@
       });
     });
 
-    // ── hero search ───────────────────────────────────────────────────────────
+    // ── HERO SEARCH ───────────────────────────────────────────────────────────
     let heroFilterType = 'all';
 
     document.querySelectorAll('.search-filters .filter-chip').forEach(chip => {
@@ -290,8 +310,8 @@
     });
 
     function doSearch() {
-      const q    = document.getElementById('heroSearch').value.trim();
-      const type = heroFilterType;
+      const q      = document.getElementById('heroSearch').value.trim();
+      const type   = heroFilterType;
       const params = new URLSearchParams({ q, type, page: 1 });
       window.location.href = `result.html?${params.toString()}`;
     }
